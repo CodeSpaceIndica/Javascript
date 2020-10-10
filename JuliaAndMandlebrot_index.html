@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <style>
+            canvas {border: 1px solid #999999}
+            .big {font-family: monospace; font-size: 32px;}
+            div {display: inline; }
+        </style>
+        <script lang="javascript" src="JuliaAndMandlebrot.js"><</script>
+        <title>Julia and Mandlebrot Sets</title>
+    </head>
+    <body onload="init()">
+        <table cellspacing="0" celpadding="0" border="0">
+            <col width="300px"/>
+            <col width="80%"/>
+            <tr>
+                <td class="big" valign="top">
+                    Value of C: <div id="cVal">2.25</div>
+                </td>
+                <td>
+                    <canvas id="setCanvas" width="1000" height="800"/>
+                </td>
+            </tr>
+        </table>
+        
+    </body>
+</html>

@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <style>
+            canvas {border: 1px solid #999999}
+            div {font-size: 32px; font-family: monospace;}
+        </style>
+        <script lang="javascript" src="setdemo.js"><</script>
+        <title>A demonstration of the Julia set function</title>
+    </head>
+    <body onload="init()">
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td>
+                    <canvas id="setDemoCanvas" width="800" height="800"/>
+                </td>
+                <td>
+                    <div>Function Evaluated : F(z) -> z<sup>2</sup> + c</div>
+                    <div id="cValue"></div>
+                    <div id="zValue"></div>
+                    <div id="bValue"></div>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
