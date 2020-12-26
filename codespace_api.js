@@ -128,3 +128,11 @@ function HSLtoRGB(h, s, l) {
 
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
+
+function toHex(num) {
+    var hex = num.toString(16);
+    if( hex.length < 2 ) {
+        hex = "0" + hex;
+    }
+    return hex;
+}
