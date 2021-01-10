@@ -13,6 +13,18 @@ class Point {
 }
 
 /**
+ * Class Rectangle. Represents a rectangle having X, Y and width and height.
+ */
+class Rectangle {
+    constructor(xx, yy, ww, hh) {
+        this.x = xx;
+        this.y = yy;
+        this.w = ww;
+        this.h = hh;
+    }
+}
+
+/**
  * Maps a number of a given input range to a number of the output range.
  * 
  * @param {*} inputNum 
@@ -129,10 +141,42 @@ function HSLtoRGB(h, s, l) {
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
+/**
+ * Converts the input number to its hexadecimal(base-16) value.
+ * Thus, 255 is 'FF'
+ * 100 is '16' and
+ * 3 is '03'
+ * 
+ * @param {*} num 
+ */
 function toHex(num) {
     var hex = num.toString(16);
     if( hex.length < 2 ) {
         hex = "0" + hex;
     }
     return hex;
+}
+
+/**
+ * Resizes a given canvas element to fit the 
+ * width of the window.
+ * The height of the canvas is also proportionally 
+ * changed.
+ * 
+ * @param {*} aCanvasElement 
+ * @param {*} fitToWidth a boolean that if set will force resize to 
+ * width
+ */
+function resizeCanvas(aCanvasElement, fitToWidth) {
+    var w = aCanvasElement.width;
+    var h = aCanvasElement.height;
+    var screenWidth = document.body.clientWidth;
+    if( screenWidth < w || fitToWidth === true ) {
+        var ratio = w / h;
+
+        var newWidth  = (screenWidth * 95)/100;
+        var newHeight = screenWidth / ratio;
+        aCanvasElement.width = newWidth;
+        aCanvasElement.height = newHeight;
+    }
 }
