@@ -9,6 +9,16 @@
     </head>
     <body onload="init()">
         <div style="min-width: 500px; display: inline-block"></div>
-        <canvas id="8queensCanvas" width="800" height="800"/>
+<b>Self playing canvas</b><br/>
+<canvas class="epi_canvas" id="chessCanvas" width="800" height="800"></canvas> <br/>
+
+<br/>
+
+<b>Try placing queens yourself</b>. 
+<input type="button" id="theButton" style="color: #292826" value="Click here" onclick="reset()"/> to reset the board.
+<br/>
+<canvas class="epi_canvas" id="chessPlayCanvas" width="800" height="800"></canvas>
+<br/>
+    
     </body>
 </html>
