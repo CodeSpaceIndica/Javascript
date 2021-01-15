@@ -11,9 +11,9 @@ class Block {
         this.isDestination = isDst;
         this.isPath = false;
 
-        this.f = null;
-        this.g = null;
-        this.h = null;
+        this.f = 0;
+        this.g = 0;
+        this.h = 0;
         this.parent = null;
     }
 
