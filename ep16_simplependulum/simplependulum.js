@@ -6,11 +6,15 @@ var pendulumCtx;
 var g = 9.80665;
 
 var pivotPoint;
-var fulcrumLength = 400;
 var bobRadius = 40;
-var theta = 45;
-var bobLocation;
-var velocity = 0;
+
+var numberOfPendulums = 2;
+
+var fulcrumLength = new Array(numberOfPendulums);
+var theta = new Array(numberOfPendulums);
+var bobLocation = new Array(numberOfPendulums);
+var velocity = new Array(numberOfPendulums);
+var colors = new Array(numberOfPendulums);
 
 /**
  * Initialize the Canvas
@@ -28,35 +32,58 @@ function init() {
     height = canvasElement.height;
 
     pivotPoint = new Point(width/2, 10);
-    bobLocation = new Point(0, 0);
 
-    drawPendulum();
+    var startFulcrumLength = width/2;
+    bobRadius = width / 15;
+    for(var i=0; i<numberOfPendulums; i++) {
+        fulcrumLength[i] = startFulcrumLength;
+        theta[i] = 45;
+        bobLocation[i] = new Point(0, 0);
+        velocity[i] = 0;
+
+        var r = parseInt( randomBetween(75, 200) );
+        var g = parseInt( randomBetween(75, 200) );
+        var b = parseInt( randomBetween(75, 200) );
+        colors[i] = "#" + toHex(r) + toHex(g) + toHex(b);
+
+        startFulcrumLength += 100;
+    }
+
+    drawPendulums();
 }
 
-function update() {
-    bobLocation.x = Math.sin(theta) * fulcrumLength + pivotPoint.x;
-    bobLocation.y = Math.cos(theta) * fulcrumLength + pivotPoint.y;
+function update(idx) {
+    bobLocation[idx].x = Math.sin(theta[idx]) * fulcrumLength[idx] + pivotPoint.x;
+    bobLocation[idx].y = Math.cos(theta[idx]) * fulcrumLength[idx] + pivotPoint.y;
 
-    var acclr = -g / fulcrumLength * Math.sin(theta);
-    velocity += acclr;
-    theta += velocity;
+    var acclr = -g / fulcrumLength[idx] * Math.sin(theta[idx]);
+    velocity[idx] += acclr;
+    theta[idx] += velocity[idx];
 
-    velocity *= 0.99;
+    velocity[idx] *= 0.999;
 }
 
-function drawPendulum() {
-    update();
-
-    pendulumCtx.clearRect(0, 0, width, height);
-
+function drawPendulums() {
+    //Clear the canvas
+    pendulumCtx.fillStyle = "#FFFFFF";
     pendulumCtx.beginPath();
-    pendulumCtx.moveTo(pivotPoint.x, pivotPoint.y);
-    pendulumCtx.lineTo(bobLocation.x, bobLocation.y);
-    pendulumCtx.stroke();
-
-    pendulumCtx.beginPath();
-    pendulumCtx.arc(bobLocation.x, bobLocation.y, bobRadius, 0, Math.PI*2, true);
+    pendulumCtx.rect(0, 0, width, height);
     pendulumCtx.fill();
 
-    setTimeout(drawPendulum, 25);
+    for(var i=0; i<numberOfPendulums; i++) {
+        update(i);
+
+        pendulumCtx.strokeStyle = colors[i];
+        pendulumCtx.beginPath();
+        pendulumCtx.moveTo(pivotPoint.x, pivotPoint.y);
+        pendulumCtx.lineTo(bobLocation[i].x, bobLocation[i].y);
+        pendulumCtx.stroke();
+
+        pendulumCtx.fillStyle = colors[i];
+        pendulumCtx.beginPath();
+        pendulumCtx.arc(bobLocation[i].x, bobLocation[i].y, bobRadius, 0, Math.PI*2, true);
+        pendulumCtx.fill();
+    }
+
+    setTimeout(drawPendulums, 25);
 }
