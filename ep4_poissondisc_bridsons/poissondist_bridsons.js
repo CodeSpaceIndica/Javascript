@@ -112,11 +112,11 @@ function isPointValid(rPoint, cellWidth, cellHeight, cellSize) {
     var xIndex = Math.floor(rPoint.x / cellSize);
     var yIndex = Math.floor(rPoint.y / cellSize);
     var iMin = Math.max(xIndex-1, 0);
-    var iMax = Math.max(xIndex+1, cellWidth-1);
+    var iMax = Math.min(xIndex+1, cellWidth-1);
     var jMin = Math.max(yIndex-1, 0);
-    var jMax = Math.max(yIndex+1, cellHeight-1);
-    for(var i=iMin; i<iMax; i++) {
-        for(var j=jMin; j<jMax; j++) {
+    var jMax = Math.min(yIndex+1, cellHeight-1);
+    for(var i=iMin; i<=iMax; i++) {
+        for(var j=jMin; j<=jMax; j++) {
             if( theGrid[i][j] 
                 && getDistance(rPoint.x, rPoint.y, theGrid[i][j].x, theGrid[i][j].y) < RADIUS
             ) {
