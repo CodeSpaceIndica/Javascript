@@ -24,8 +24,10 @@ function init() {
 
     width = canvasElement.width;
     height = canvasElement.height;
-   
+
+    let pendulumHeight = height/2;
     let mass = 8;
+    //Make the bob radius proportional to the size of the canvas.
     let bobRadius = mass * width / 200;
     let startX = (width/2) - (((bobRadius*2)*NUM_PENDULUMS)/2);
     startX += bobRadius;
@@ -37,10 +39,10 @@ function init() {
         let rgbClr = "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
         let pivotPoint = new Point(startX, 10);
 
-        pendulums[i] = new Bob(pivotPoint, mass, 0, 300, rgbClr);
+        pendulums[i] = new Bob(pivotPoint, mass, 0, pendulumHeight, rgbClr);
         pendulums[i].updateLocation();
 
-        startX += (bobRadius*2)+2;
+        startX += bobRadius*2;
         hue += incrHue;
     }
 
@@ -51,7 +53,8 @@ function init() {
 }
 
 function drawCradle() {
-    ncCtx.fillStyle = "#000000";
+    //Leave a trail behind.
+    ncCtx.fillStyle = "rgba(0, 0, 0, 0.3)";
     ncCtx.beginPath();
     ncCtx.rect(0, 0, width, height);
     ncCtx.fill();
