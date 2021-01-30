@@ -180,3 +180,13 @@ function resizeCanvas(aCanvasElement, fitToWidth) {
         aCanvasElement.height = newHeight;
     }
 }
+
+/**
+ * A constants class to be used through
+ * out our development.
+ */
+class Constants {
+}
+Constants.RADIANS = Math.PI / 180;
+Constants.HALF_PI = Math.PI / 2;
+Constants.TWO_PI  = Math.PI * 2;
