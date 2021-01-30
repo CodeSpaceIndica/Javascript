@@ -2,7 +2,6 @@ const COEFF_RESTITUTION = 0.8;
 const GRAV_FORCE = new Point(0, 0.6);
 const MAX_SPEED = 8;
 
-const NUM_PEGS = 30;
 const PEG_RADIUS = 5;
 
 const NUM_BALLS = 600;
@@ -11,6 +10,8 @@ const BALL_MASS = 20;
 
 var width, height;
 var ctx;
+var reqID;
+
 var ctr = 0;
 var bCtr = 0;
 
@@ -18,8 +19,10 @@ var balls = [];
 var pegs = [];
 var buckets = [];
 
+/**
+ * Initialize the canvas
+ */
 function init() {
-    //Init the canvas
     let canvasElement = document.getElementById("theCanvas");
     resizeCanvas(canvasElement, false);
 
@@ -28,29 +31,49 @@ function init() {
 
     ctx = canvasElement.getContext("2d");
 
+    begin();
+}
+
+/**
+ * Starts the process. Also called when "Reset" button is clicked.
+ */
+function begin() {
+    if( reqID ) {
+        cancelAnimationFrame(reqID);
+    }
+
+    ctr = 0;
+    bCtr = 0;
+    
+    balls = [];
+    pegs = [];
+    buckets = [];
+
+    let numPegs = parseInt(width / 20); //Make it dynamic so it adjusts to canvas' width
     let startY = 30;
-    let ctr = 0;
+    let count = 0;
     let gap = 16;
-    for(let i=0; i<10; i++) {
-        let pegCount = ctr % 2 == 0 ? NUM_PEGS-1 : NUM_PEGS;
+    let pegRowCount = parseInt(height * 0.014); //Make it dynamic so the height adjusts to the canvas's height
+    for(let i=0; i<pegRowCount; i++) {
+        let pegCount = count % 2 == 0 ? numPegs-1 : numPegs;
         let startX = (width/2) - (pegCount*(PEG_RADIUS+gap))/2;
         for(let j=0; j<pegCount; j++) {
-            var aPeg = new Peg(new Point(startX, startY), PEG_RADIUS);
+            let aPeg = new Peg(new Point(startX, startY), PEG_RADIUS);
             pegs.push(aPeg);
 
             startX += gap + PEG_RADIUS
         }
         startY += gap + PEG_RADIUS + 5;
-        ctr++;
+        count++;
     }
 
-    let numBuckets = NUM_PEGS;
+    let numBuckets = numPegs;
     let bucketWidth = PEG_RADIUS + gap;
     let startX = (width/2) - (numBuckets*bucketWidth)/2;
     let bucketHeight = height-startY;
     startY = height - bucketHeight;
     for(let i=0; i<numBuckets; i++) {
-        var aBucket = new Bucket(startX, startY, bucketWidth, bucketHeight);
+        let aBucket = new Bucket(startX, startY, bucketWidth, bucketHeight);
         buckets.push(aBucket);
 
         startX += bucketWidth;
@@ -60,26 +83,27 @@ function init() {
 }
 
 function animate() {
-    //ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
     ctx.rect(0, 0, width, height);
     ctx.fill();
 
     if( ctr % 5 == 0 ) {
         if( bCtr < NUM_BALLS ) {
-            var x = width/2 - randomBetween(-BALL_RADIUS, BALL_RADIUS);
-            var y = -50;
-            var aBall = new Ball(new Point(x, y), BALL_RADIUS);
+            let x = width/2 - randomBetween(-BALL_RADIUS, BALL_RADIUS);
+            let y = -50;
+            let aBall = new Ball(new Point(x, y), BALL_RADIUS);
             balls.push(aBall);
             bCtr++
         }
     }
     ctr++;
 
+    //Render the pegs
     for(let i=0; i<pegs.length; i++) {
         pegs[i].render(ctx);
     }
 
+    //Render the balls. Should have called them "Beads". :-/
     for(let i=0; i<balls.length; i++) {
         if( balls[i].isDone ) {
             continue;
@@ -89,14 +113,19 @@ function animate() {
         balls[i].render(ctx);
     }
 
+    //Render the buckets
     for(let i=0; i<buckets.length; i++) {
         buckets[i].render(ctx);
     }
 
+    //For Collision
     for(let i=0; i<balls.length; i++) {
+        //If the ball has done entering a bucket, don't do anything.
         if( balls[i].isDone ) {
             continue;
         }
+
+        //Ball-Peg collision
         for(let k=0; k<pegs.length; k++) {
             let x1 = balls[i].location.x + balls[i].velocity.x;
             let y1 = balls[i].location.y + balls[i].velocity.y;
@@ -118,6 +147,7 @@ function animate() {
             }
         }
 
+        //Ball-Ball collision
         for(let j=0; j<balls.length; j++) {
             if( i == j ) {
                 continue;
@@ -148,6 +178,7 @@ function animate() {
             }
         }
 
+        //Ball-Bucket collision
         for(let l=0; l<buckets.length; l++) {
             if( balls[i].location.y+balls[i].radius >= buckets[l].y &&
                 balls[i].location.x+balls[i].radius >= buckets[l].x &&
@@ -161,7 +192,7 @@ function animate() {
         }
     }
 
-    requestAnimationFrame(animate);
+    reqID = requestAnimationFrame(animate);
 }
 
 /**
