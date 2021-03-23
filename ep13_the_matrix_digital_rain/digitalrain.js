@@ -7,7 +7,7 @@ var colCount, rowCount;
 var charArray;
 var highLightArray;
 
-var fadeSteps = 20;
+var fadeSteps = 40;
 var startRed = 164;
 var startGrn = 255;
 var startBlu = 130;
@@ -30,10 +30,14 @@ var katakanaChars = ["\u30A1", "\u30A2", "\u30A3", "\u30A4", "\u30A5", "\u30A6",
 function init() {
     //Init the canvas
     var canvasElement = document.getElementById("digirainCanvas");
+    resizeCanvas(canvasElement, false);
     drCtx = canvasElement.getContext("2d");
 
     width = canvasElement.width;
     height = canvasElement.height;
+
+    charSize = parseInt(width / 85);
+    hSize = parseInt(width / 43);
 
     drCtx.font = "bold " + charSize + "px Mono";
 
