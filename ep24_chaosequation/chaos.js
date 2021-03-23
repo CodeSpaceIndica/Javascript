@@ -24,7 +24,7 @@ function init() {
     width = canvasElement.width;
     height = canvasElement.height;
 
-    incrRate = 2 / width;
+    incrRate = 4 / width;
     incrHue = 360 / width;
 
     ctx.font = "20px Mono";
@@ -40,14 +40,26 @@ function init() {
     chaos();
 }
 
+function reset() {
+    rate = 0.5;
+    hue = 0;
+
+    ctx.fillStyle = "#000000";
+    ctx.beginPath();
+    ctx.rect(0, 0, width, height);
+    ctx.fill()
+
+    chaos();
+}
+
 function chaos() {
-    // ctx.clearRect(translateX, 0, 100, 25);
-    // ctx.fillText(rate.toFixed(3), translateX+10, 20);
+    ctx.clearRect(translateX, 0, 130, 25);
+    ctx.fillText("R - " + rate.toFixed(3), translateX+10, 20);
 
     ctx.fillStyle = "hsl(" + hue + ",100%, 50%)";
 
     let genCount = 0.4;
-    for(let i=0; i<2000; i++) {
+    for(let i=0; i<1000; i++) {
         genCount = rate * genCount * (1 - genCount);
 
         let x = (rate / MAX_RATE) * width;
