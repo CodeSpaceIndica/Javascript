@@ -55,7 +55,7 @@ class Particle {
                 let interaction = this.interactionList[idx];
                 if( particles[i].type == interaction.TYPE ) {
                     if( distance < interaction.DISTANCE ) {
-                        let force = 10 / (distance * distance);
+                        let force = 2 / (distance * distance);
                         if( interaction.INTERACTION == INTERACTION.REPEL ) {
                             force *= -1;
                         }
