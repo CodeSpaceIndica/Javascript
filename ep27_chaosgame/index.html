@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <style>
+            canvas {border: 1px solid #999999}
+        </style>
+        <script lang="javascript" src="../codespace_api.js"><</script>
+        <script lang="javascript" src="chaosgame.js"></script>
+        <title>A game of chaos</title>
+    </head>
+    <body onload="init()">
+        <div style="min-width: 400px; display: inline-block; vertical-align: top;">
+            <p> 
+                Sides: <input id="numSidesRng" type="range" 
+                    min="3" max="8" value="3" step="1"/>
+                <input id="numSidesTxt" type="text" size="5" 
+                        style="font-size: 20px;" readonly/> 
+            </p>
+            <p>
+                Factor: <input id="factorRng" type="range" 
+                            min="0.1" max="1" value="0.5" step="0.025"/>
+                <input id="factorTxt" type="text" size="5" 
+                            style="font-size: 20px;" readonly/> 
+            </p>
+
+            <p> <input type="button" value="Draw..." 
+                        onclick="drawFractal()" id="drawButton"> 
+            </p>
+        </div>
+        <canvas id="aCanvas" width="800" height="800"></canvas>
+    </body>
+</html>
