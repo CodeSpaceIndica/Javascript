@@ -6,7 +6,6 @@ var width, height;
 
 var ctx;
 
-var imageObject = new Image();
 var imageData, pixelData, origPixelData;
 
 var current, previous;
@@ -14,7 +13,7 @@ var current, previous;
 /**
  * Initialize the Canvas
  */
-function init() {
+async function init() {
     //Init the canvas
     var canvasElement = document.getElementById("rCanvas");
     resizeCanvas(canvasElement, false);
@@ -24,13 +23,25 @@ function init() {
     width = canvasElement.width;
     height = canvasElement.height;
 
-    imageObject.onload = function() {
-        loadPixels();
-    }
-    imageObject.src = "pebbles.png";
+    await loadImage();
 }
 
-function loadPixels() {
+/**
+ * Load the image.
+ * 
+ * @returns Promise
+ */
+function loadImage() {
+    // wanted to keep the init function a bit more clean
+    return new Promise((resolve, reject) => {
+        const imageObject = new Image();
+
+        imageObject.onload = () => resolve(loadPixels(imageObject));
+        imageObject.src = "pebbles.png";
+    });
+}
+
+function loadPixels(imageObject) {
     let tempCanvas = document.createElement("canvas");
     tempCanvas.width = width;
     tempCanvas.height = height;
@@ -38,21 +49,17 @@ function loadPixels() {
     tempCtx.drawImage(imageObject, 0, 0);
     imageData = tempCtx.getImageData(0, 0, width, height);
     pixelData = imageData.data;
-    //origPixelData = pixelData;
-    origPixelData = new Array();
-    for(let i=0; i<pixelData.length; i++) {
-        origPixelData[i] = pixelData[i];
-    }
 
-    current  = new Array();
-    previous = new Array();
-    for(let i=0; i<width; i++) {
-        current[i]  = new Array();
-        previous[i] = new Array();
-        for(let j=0; j<height; j++) {
-            current[i][j]  = 0;
-            previous[i][j] = 0;
-        }
+    // simple trick to deep copy in JavaScript
+    origPixelData = JSON.parse(JSON.stringify(pixelData));
+
+    current  = [];
+    previous = [];
+
+    for (let i = 0; i < width; ++i) {
+        // a bit terse, but gets the job done
+        current.push(Array.from({ length: height }, (v, i) => 0));
+        previous.push(Array.from({ length: height }, (v, i) => 0));
     }
 
     ripples();
