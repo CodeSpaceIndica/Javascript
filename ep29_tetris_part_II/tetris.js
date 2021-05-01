@@ -20,6 +20,8 @@ var isGameOver = false;
 //ANIMATION FUNCTIONS
 function init() {
     let theCanvas = document.getElementById("aCanvas");
+    resizeCanvas(theCanvas, false);
+
     ctx = theCanvas.getContext("2d");
 
     width = theCanvas.width;
