@@ -10,6 +10,7 @@ function addEvents() {
             else {
                 col++;
             }
+            event.preventDefault();
         }
         else if( event.code == "ArrowRight" ) {
             col++;
@@ -20,12 +21,14 @@ function addEvents() {
             else {
                 col--;
             }
+            event.preventDefault();
         }
         else if( event.code == "ArrowDown" ) {
             isKeyDown = true;
             dropPiece();
             transposePiece();
             drawBoard();
+            event.preventDefault();
         }
         else if( event.code == "ArrowUp" ) {
             let rotatedTetrominoe = rotate90Clockwise(currTetrominoe);
@@ -40,6 +43,11 @@ function addEvents() {
                         while( j+col > cols-1 ) {
                             col--;
                         }
+                    }
+                }
+                if( i+row > rows-1 ) {
+                    while( i+row > rows-1 ) {
+                        row--;
                     }
                 }
             }
@@ -60,6 +68,7 @@ function addEvents() {
                 transposePiece();
                 drawBoard();
             }
+            event.preventDefault();
         }
     });
 
