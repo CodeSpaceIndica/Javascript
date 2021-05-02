@@ -2,72 +2,19 @@
 function addEvents() {
     document.addEventListener("keydown", function(event) {
         if( event.code == "ArrowLeft" ) {
-            col--;
-            if( canMoveHorizontal() ) {
-                transposePiece();
-                drawBoard();
-            }
-            else {
-                col++;
-            }
+            arrowLeftEvent();
             event.preventDefault();
         }
         else if( event.code == "ArrowRight" ) {
-            col++;
-            if( canMoveHorizontal() ) {
-                transposePiece();
-                drawBoard();
-            }
-            else {
-                col--;
-            }
+            arrowRightEvent();
             event.preventDefault();
         }
         else if( event.code == "ArrowDown" ) {
-            isKeyDown = true;
-            dropPiece();
-            transposePiece();
-            drawBoard();
+            arrowDownEvent();
             event.preventDefault();
         }
         else if( event.code == "ArrowUp" ) {
-            let rotatedTetrominoe = rotate90Clockwise(currTetrominoe);
-            for(let i=0; i<rotatedTetrominoe.length; i++) {
-                for(let j=0; j<rotatedTetrominoe[i].length; j++) {
-                    if( j+col < 0 ) {
-                        while( j+col < 0 ) {
-                            col++;
-                        }
-                    }
-                    if( j+col > cols-1 ) {
-                        while( j+col > cols-1 ) {
-                            col--;
-                        }
-                    }
-                }
-                if( i+row > rows-1 ) {
-                    while( i+row > rows-1 ) {
-                        row--;
-                    }
-                }
-            }
-            let canRotate = true;
-            for(let i=0; i<rotatedTetrominoe.length; i++) {
-                for(let j=0; j<rotatedTetrominoe[i].length; j++) {
-                    if( tetrisArr[i+row][j+col] + rotatedTetrominoe[i][j] == 3) {
-                        canRotate = false;
-                        break;
-                    }
-                }
-                if( !canRotate ) {
-                    break;
-                }
-            }
-            if( canRotate ) {
-                currTetrominoe = JSON.parse( JSON.stringify(rotatedTetrominoe));
-                transposePiece();
-                drawBoard();
-            }
+            arrowUpEvent();
             event.preventDefault();
         }
     });
@@ -77,4 +24,115 @@ function addEvents() {
             isKeyDown = false;
         }
     });
+
+    document.getElementById("bLeft").addEventListener("click", function(event) {
+        arrowLeftEvent();
+        event.preventDefault();
+    });
+    document.getElementById("bRight").addEventListener("click", function(event) {
+        arrowRightEvent();
+        event.preventDefault();
+    });
+    document.getElementById("bRotate").addEventListener("click", function(event) {
+        arrowUpEvent();
+        event.preventDefault();
+    });
+    document.getElementById("bDown").addEventListener("mousedown", function(event) {
+        startButtonDown();
+        event.preventDefault();
+    });
+    document.getElementById("bDown").addEventListener("touchstart", function(event) {
+        startButtonDown();
+        event.preventDefault();
+    });
+    document.getElementById("bDown").addEventListener("mouseup", function(event) {
+        endButtonDown();
+        event.preventDefault();
+    });
+    document.getElementById("bDown").addEventListener("touchend", function(event) {
+        endButtonDown();
+        event.preventDefault();
+    });
+    document.getElementById("bDown").addEventListener("mouseleave", function(event) {
+        endButtonDown();
+        event.preventDefault();
+    });
+}
+
+function arrowLeftEvent() {
+    col--;
+    if( canMoveHorizontal() ) {
+        transposePiece();
+        drawBoard();
+    }
+    else {
+        col++;
+    }
+}
+
+function arrowRightEvent() {
+    col++;
+    if( canMoveHorizontal() ) {
+        transposePiece();
+        drawBoard();
+    }
+    else {
+        col--;
+    }
+}
+
+function arrowDownEvent() {
+    isKeyDown = true;
+    dropPiece();
+    transposePiece();
+    drawBoard();
+}
+
+function arrowUpEvent() {
+    let rotatedTetrominoe = rotate90Clockwise(currTetrominoe);
+    for(let i=0; i<rotatedTetrominoe.length; i++) {
+        for(let j=0; j<rotatedTetrominoe[i].length; j++) {
+            if( j+col < 0 ) {
+                while( j+col < 0 ) {
+                    col++;
+                }
+            }
+            if( j+col > cols-1 ) {
+                while( j+col > cols-1 ) {
+                    col--;
+                }
+            }
+        }
+        if( i+row > rows-1 ) {
+            while( i+row > rows-1 ) {
+                row--;
+            }
+        }
+    }
+    let canRotate = true;
+    for(let i=0; i<rotatedTetrominoe.length; i++) {
+        for(let j=0; j<rotatedTetrominoe[i].length; j++) {
+            if( tetrisArr[i+row][j+col] + rotatedTetrominoe[i][j] == 3) {
+                canRotate = false;
+                break;
+            }
+        }
+        if( !canRotate ) {
+            break;
+        }
+    }
+    if( canRotate ) {
+        currTetrominoe = JSON.parse( JSON.stringify(rotatedTetrominoe));
+        transposePiece();
+        drawBoard();
+    }
+}
+
+function startButtonDown() {
+    bDownTmrID = setInterval(arrowDownEvent, 25);
+}
+
+function endButtonDown() {
+    isKeyDown = false;
+    clearInterval(bDownTmrID);
 }
