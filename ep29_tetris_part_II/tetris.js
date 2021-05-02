@@ -33,6 +33,10 @@ function init() {
 
     cellSize = height / rows;
 
+    startGame();
+}
+
+function startGame() {
     for(let i=0; i<rows; i++) {
         tetrisArr[i] = [];
         for(let j=0; j<cols; j++) {
@@ -49,6 +53,8 @@ function init() {
     rowsCompleted = 0;
     level = 1
     gamePlaySpeed = 500;
+
+    isGameOver = false;
 
     tetris();
 }
@@ -179,6 +185,8 @@ function transposePiece() {
 }
 
 function dropPiece() {
+    let ret = false;
+
     row++;
 
     if( isSettled() ) {
@@ -197,7 +205,10 @@ function dropPiece() {
         nextTetrominoe = randomTetrominoe();
         row = 0;
         col = parseInt( (cols/2) - (currTetrominoe[0].length/2) );
+
+        ret = true;
     }
+    return ret;
 }
 
 function randomTetrominoe() {
