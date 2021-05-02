@@ -212,7 +212,7 @@ function dropPiece() {
 }
 
 function randomTetrominoe() {
-    let rnd = parseInt( randomBetween(0, allTetrominoes.length+1) );
+    let rnd = parseInt( randomBetween(0, allTetrominoes.length) );
     rnd = rnd > allTetrominoes.length-1 ? allTetrominoes.length-1 : rnd;
     piecesCount[rnd]++;
     return allTetrominoes[rnd];
@@ -340,7 +340,7 @@ function rowCompletion() {
 function calculateScore(numCompletedRows) {
     rowsCompleted += numCompletedRows;
 
-    score += numCompletedRows * 2;
+    score += numCompletedRows * cols * 2;
     if( numCompletedRows >= 4 ) {
         score += 20;
     }
