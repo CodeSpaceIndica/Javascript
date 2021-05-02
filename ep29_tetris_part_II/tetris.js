@@ -17,6 +17,8 @@ var score, rowsCompleted, level, gamePlaySpeed;
 
 var isGameOver = false;
 
+var bDownTmrID;
+
 //ANIMATION FUNCTIONS
 function init() {
     let theCanvas = document.getElementById("aCanvas");
@@ -109,9 +111,20 @@ function drawBoard() {
         y += cellSize;
     }
 
-    ctx.font = "18px Mono";
+    x = (cols * cellSize) + 30;
+    y = 250;
+    ctx.font = "14px Mono";
+    for(idx in piecesCount) {
+        ctx.fillStyle = "#00FFFF";
+        ctx.fillText(piecesLabel[idx], x, y);
+        ctx.fillText(":", x+12, y);
+        ctx.fillText(piecesCount[idx], x+25, y);
+        y += 16;
+    }
+
     x = (cols * cellSize) + 10;
     y = height-100;
+    ctx.font = "18px Mono";
     ctx.fillStyle = "#FFFFFF";
     ctx.fillText("Score", x, y);
     ctx.fillText(":", x+58, y);
@@ -190,6 +203,7 @@ function dropPiece() {
 function randomTetrominoe() {
     let rnd = parseInt( randomBetween(0, allTetrominoes.length+1) );
     rnd = rnd > allTetrominoes.length-1 ? allTetrominoes.length-1 : rnd;
+    piecesCount[rnd]++;
     return allTetrominoes[rnd];
 }
 
@@ -305,6 +319,13 @@ function rowCompletion() {
     });
 }
 
+/**
+ * When we coded this, we set the level up at
+ * 250 points. I did find this to be very slow 
+ * at levelling up. Changed it to 100.
+ * 
+ * @param {*} numCompletedRows 
+ */
 function calculateScore(numCompletedRows) {
     rowsCompleted += numCompletedRows;
 
@@ -318,9 +339,15 @@ function calculateScore(numCompletedRows) {
     if( numCompletedRows >= 2 ) {
         score += 5;
     }
-    if( score > (level*250) ) {
+    //Ravi was right, 250 was too muh. 
+    //100 points seems about right for 
+    //levelling up.
+    if( score >= (level*100) ) {
         level++;
         gamePlaySpeed -= 50;
+        if( gamePlaySpeed < 50 ) {
+            gamePlaySpeed = 50;
+        }
     }
 }
 
