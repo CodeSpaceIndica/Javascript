@@ -17,6 +17,10 @@ function addEvents() {
             arrowUpEvent();
             event.preventDefault();
         }
+        else if( event.code == "Space" ) {
+            dropTerominoeFully();
+            event.preventDefault();
+        }
     });
 
     document.addEventListener("keyup", function(event) {
@@ -55,6 +59,16 @@ function addEvents() {
     });
     document.getElementById("bDown").addEventListener("mouseleave", function(event) {
         endButtonDown();
+        event.preventDefault();
+    });
+    document.getElementById("bFullDown").addEventListener("click", function(event) {
+        dropTerominoeFully();
+        event.preventDefault();
+    });
+    document.getElementById("restartButton").addEventListener("click", function(event) {
+        if( isGameOver) {
+            startGame();
+        }
         event.preventDefault();
     });
 }
@@ -129,10 +143,18 @@ function arrowUpEvent() {
 }
 
 function startButtonDown() {
-    bDownTmrID = setInterval(arrowDownEvent, 25);
+    bDownTmrID = setInterval(arrowDownEvent, 50);
 }
 
 function endButtonDown() {
     isKeyDown = false;
     clearInterval(bDownTmrID);
+}
+
+function dropTerominoeFully() {
+    while( !dropPiece() ) {
+
+    }
+    transposePiece();
+    drawBoard();
 }
