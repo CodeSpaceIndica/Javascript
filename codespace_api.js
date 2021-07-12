@@ -158,6 +158,21 @@ function toHex(num) {
 }
 
 /**
+ * This method uses the Math.atan2 method to find the angle between two points
+ * 
+ * @param {*} x1 
+ * @param {*} y1 
+ * @param {*} x2 
+ * @param {*} y2 
+ */
+function getAngle(x1, y1, x2, y2) {
+    let xDiff = x1 - x2;
+    let yDiff = y1 - y2;
+
+    return Math.atan2(yDiff, xDiff);
+}
+
+/**
  * Resizes a given canvas element to fit the 
  * width of the window.
  * The height of the canvas is also proportionally 
