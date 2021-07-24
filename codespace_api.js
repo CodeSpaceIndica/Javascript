@@ -11,18 +11,34 @@ class Point {
         console.log(this.x + "," + this.y);
     }
 
+    /**
+     * returns a new point after subtracting another point from current point.
+     * 
+     * @param {*} anotherPoint 
+     * @returns 
+     */
     subtract(anotherPoint) {
         return new Point(this.x-anotherPoint.x, this.y-anotherPoint.y);
     }
 
+    /**
+     * Finds the magnitude and normalizes the result
+     * 
+     * @returns 
+     */
     normalize() {
-        let magnitude = Math.sqrt(this.x*this.x, this.y*this.y);
+        let magnitude = Math.sqrt(this.x*this.x + this.y*this.y);
         if( magnitude != 0 ) {
             return new Point(this.x/magnitude, this.y/magnitude);
         }
         return null;
     }
 
+    /**
+     * Limits the x and y values of this point object to the maxVal value.
+     * 
+     * @param {*} maxVal 
+     */
     limit(maxVal) {
         if( this.x > maxVal ) {
             this.x = maxVal;
@@ -36,6 +52,23 @@ class Point {
         if( this.y < -maxVal ) {
             this.y = -maxVal;
         }
+    }
+
+    /**
+     * Same as the getDistance function above, except this compares distance to another point 
+     * object pnt
+     * 
+     * @param {*} pnt 
+     */ 
+    distanceFrom(pnt) {
+        return Math.abs( Math.sqrt( (this.x-pnt.x)*(this.x-pnt.x) + (this.y-pnt.y)*(this.y-pnt.y) ) );
+    }
+
+    /**
+     * Clones a point
+     */
+    clone() {
+        return new Point(this.x, this.y);
     }
 }
 
@@ -100,7 +133,6 @@ function randomBetween(min, max) {
     }
 }
 
-
 /**
  * A simple hypotenuse calculation returns the 
  * distance between two points.
@@ -115,7 +147,6 @@ function randomBetween(min, max) {
 function getDistance(x1, y1, x2, y2) {
     return Math.abs( Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) ) );
 }
-
 
 /** 
  * Helper method that converts hue to rgb 
