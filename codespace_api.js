@@ -65,10 +65,28 @@ class Point {
     }
 
     /**
+     * Same as the getDistanceNoSqrt function above
+     * object pnt
+     * 
+     * @param {*} pnt 
+     */ 
+     distanceFromNoSqrt(pnt) {
+        return ((this.x-pnt.x)*(this.x-pnt.x)) + ((this.y-pnt.y)*(this.y-pnt.y)) ;
+    }
+
+    /**
      * Clones a point
      */
     clone() {
         return new Point(this.x, this.y);
+    }
+
+    /**
+     * Copies a point to another point
+     */
+    copyTo(anotherPoint) {
+        anotherPoint.x = this.x;
+        anotherPoint.y = this.y;
     }
 }
 
@@ -146,6 +164,22 @@ function randomBetween(min, max) {
  */ 
 function getDistance(x1, y1, x2, y2) {
     return Math.abs( Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) ) );
+}
+
+/**
+ * A getDistance funtion WITHOUT the need to use Squareroot. 
+ * the Square Root function is expensive on the CPU. 
+ * Therefore to check if the distance is less than a given radius, 
+ * simply square the radius as well. 
+ * 
+ * @param {*} x1 
+ * @param {*} y1 
+ * @param {*} x2 
+ * @param {*} y2 
+ * @returns 
+ */
+function getDistanceNoSqrt(x1, y1, x2, y2) {
+    return ((x1 - x2)*(x1 - x2)) + ((y1 - y2)*(y1 - y2));
 }
 
 /** 

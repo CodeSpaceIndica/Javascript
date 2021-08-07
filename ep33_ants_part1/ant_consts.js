@@ -1,16 +1,26 @@
 //Constants
-const MAX_ANT_SPEED = 3;
-const MAX_STEER_FORCE = 0.1;
-const WANDER_STRENGTH = 0.4;
-const ANT_SIZE = 10;
+const ANT_MAX_SPEED = 3;
+const ANT_STEER_FORCE_NORM = 0.1;
+const ANT_STEER_FORCE_MAX = 1;
+const ANT_WANDER_STRENGTH = 0.4;
+const ANT_SIZE = 5;
 const ANT_BODY_SIZE = ANT_SIZE * 1.2;
-const ANT_COUNT = 1;
+const ANT_COUNT = 10;
 const ANT_MIN_STEPS = 450;
-const ANT_MAX_STEPS = 600;
+const ANT_MAX_STEPS = 900;
+const ANT_SMELL_DISTANCE = 22;
+const ANT_SMELL_AREA = ANT_SMELL_DISTANCE*ANT_SMELL_DISTANCE;
 
-const DECAY_CONSTANT = 0.002;
+const DECAY_CONSTANT = 0.001;
+
+const FOOD_MAX_QUANTITY = 10;
+const FOOD_BITE_SIZE = 0.1;
+
+const THIRD_PI  = Math.PI / 3;
+const FOURTH_PI = Math.PI / 4;
 
 const ANT_MODE = {
     FORAGER: 1,
-    RETURNER: 2
+    RETURNER: 2,
+    FOODIE: 3
 };
