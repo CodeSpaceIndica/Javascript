@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <style>
+            canvas {border: 1px solid #999999}
+        </style>
+        <script lang="javascript" src="../../codespace_api.js"><</script>
+        <script lang="javascript" src="sudokusolver.js"></script>
+        <title>Sudoku Solver</title>
+    </head>
+    <body onload="init()">
+        <div style="margin: auto; width: 50%; padding: 10px;">
+            <canvas id="aCanvas" width="800" height="800" onclick="solve()"></canvas>
+        </div>
+        <div id="smiley" style="margin: auto; width: 50%; padding: 10px; font-size: 48px; visibility: hidden;">
+            &#128512;
+        </div>
+    </body>
+</html>
