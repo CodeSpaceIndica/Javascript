@@ -1,5 +1,5 @@
 //CONSTANTS
-var GAP = 2;
+var GAP = 3;
 
 //GLOBALS
 var ctx;
@@ -44,7 +44,7 @@ function tesselate() {
     ctx.fill();
 
     for(let x=0; x<width; x+=GAP) {
-        for(let y=0; y<width; y+=GAP) {
+        for(let y=0; y<height; y+=GAP) {
             let closestVPoint = getClosestVoronoiPoint(x, y);
 
             ctx.fillStyle = closestVPoint.clr;
