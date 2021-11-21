@@ -88,6 +88,13 @@ class Point {
         anotherPoint.x = this.x;
         anotherPoint.y = this.y;
     }
+
+    /**
+     * Check if this point is equal to another point. 
+     */
+    equals(anotherPoint) {
+        return this.x == anotherPoint.x && this.y == anotherPoint.y;
+    }
 }
 
 /**
