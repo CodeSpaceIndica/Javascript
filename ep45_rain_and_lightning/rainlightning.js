@@ -12,6 +12,9 @@ var colors = new Array();
 var lineW = 7;
 var lightningPoints = new Array();
 
+var thunderSoundsArr = new Array();
+var sound = false;
+
 window.addEventListener("load", (event) => {
     let theCanvas = document.getElementById("aCanvas");
     //resizeCanvas(theCanvas, false);
@@ -19,6 +22,15 @@ window.addEventListener("load", (event) => {
     height = theCanvas.height;
 
     ctx = theCanvas.getContext("2d");
+
+    let thn = new Audio("thunder1.mp3");
+    thunderSoundsArr.push(thn);
+    thn = new Audio("thunder2.mp3");
+    thunderSoundsArr.push(thn);
+    thn = new Audio("thunder3.mp3");
+    thunderSoundsArr.push(thn);
+    thn = new Audio("thunder4.mp3");
+    thunderSoundsArr.push(thn);
 
     for(let i=0; i<NUM_DROPS; i++) {
         let rPoint = new Point(
@@ -32,9 +44,6 @@ window.addEventListener("load", (event) => {
         colors.push("rgb(" + color + "," + color + "," + color + ")");
     }
 
-    theCanvas.addEventListener("click", function(event) {
-        createLightning();
-    });
     let timeOut = parseInt( randomBetween(5000, 7000) );
     setTimeout(createLightning, timeOut);
 
@@ -92,6 +101,12 @@ function createLightning() {
     ctx.rect(0, 0, width, height);
     ctx.fill();
 
+    if( sound ) {
+        let r = parseInt( randomBetween(0, thunderSoundsArr.length-1) );
+        thunderSoundsArr[r].play();
+    }
+
+
     lightning();
 }
 
@@ -114,4 +129,14 @@ function lightning() {
     }
 
     requestAnimationFrame(lightning);
+}
+
+function soundFN() {
+    sound = !sound;
+    if( sound ) {
+        document.getElementById("sndBtn").innerHTML = "&#128263; - Currently Playing";
+    }
+    else {
+        document.getElementById("sndBtn").innerHTML = "&#128266; - Currently Muted";
+    }
 }
