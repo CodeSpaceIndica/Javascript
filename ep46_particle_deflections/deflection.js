@@ -88,8 +88,10 @@ function deflection() {
             }
         }
 
+        //OH MY GOD RECTANGLES ARE SO MUCH MORE EFFICIENT.
         ctx.beginPath();
-        ctx.arc(aPnt.x, aPnt.y, PARTICLE_SIZE, 0, Constants.TWO_PI, false);
+        //ctx.arc(aPnt.x, aPnt.y, PARTICLE_SIZE, 0, Constants.TWO_PI, false);
+        ctx.rect(aPnt.x, aPnt.y, 2, 2);
         ctx.fill();
     }
 
