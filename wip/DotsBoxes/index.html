@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Dots Boxes</title>
+        <style>
+            * {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+            canvas {border: 1px solid #E1E1E1; vertical-align: top;}
+            table {display: inline; }
+        </style>
+        <script src="codespace_api.js"></script>
+        <script src="box.js"></script>
+        <script src="dotsboxes.js"></script>
+    </head>
+    <body onload="animInit()">
+        <canvas width="600" height="600" id="aCanvas"></canvas>
+        <table cellpadding="5" cellspacing="5">
+            <tr>
+                <td>Status</td>
+                <td>:</td>
+                <td><div id="status"></div></td>
+            </tr>
+            <tr>
+                <td>Next Move By</td>
+                <td>:</td>
+                <td><div id="currPlyr"></div></td>
+            </tr>
+            <tr>
+                <td>Result</td>
+                <td>:</td>
+                <td><div id="result"></div></td>
+            </tr>
+            <tr>
+                <td colspan="3" align="center"><button onclick="resetBoard()">Reset Board</button></td>
+            </tr>
+        </table>
+    </body>
+</html>
