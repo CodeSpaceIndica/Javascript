@@ -31,13 +31,6 @@ class Box {
 		this.bottom = false;
 		this.left   = false;
 
-		//Flags denoting if the corners are highlighted, like 
-		//is the mouse on top of them.
-		this.hTop    = false;
-		this.hRight  = false;
-		this.hBottom = false;
-		this.hLeft   = false;
-
 		//A flag to determine if the box is complete
 		//meaning all 4 corners are ON and WHO completed it
 		this.complete = false;
@@ -71,48 +64,53 @@ class Box {
 	 * @param {*} x 
 	 * @param {*} y 
 	 */
-	checkMouseMovement(x, y) {
+	checkMouseMovement(x, y, ctx) {
 		if( this.complete ) {
 			return;
 		}
 		//Check top
 		let cX = ((this.x) + (this.x+this.w)) / 2;
 		let cY = ((this.y) + (this.y)) / 2;
-		if( getDistance(x, y, cX, cY) <= 20 ) {
-			this.hTop = true;
-		}
-		else {
-			this.hTop = false;
+		if( getDistance(x, y, cX, cY) <= 20 && !this.top ) {
+			ctx.strokeStyle = "#9999FF";
+			ctx.beginPath();
+			ctx.moveTo(this.x, this.y);
+			ctx.lineTo(this.x+this.w, this.y);
+			ctx.stroke();	
 		}
 
 		//Check right
 		cX = ((this.x+this.w) + (this.x+this.w)) / 2;
 		cY = ((this.y) + (this.y+this.h)) / 2;
-		if( getDistance(x, y, cX, cY) <= 20 ) {
-			this.hRight = true;
-		}
-		else {
-			this.hRight = false;
+		if( getDistance(x, y, cX, cY) <= 20 && !this.right ) {
+			//Right Line
+			ctx.strokeStyle = "#9999FF";
+			ctx.beginPath();
+			ctx.moveTo(this.x+this.w, this.y);
+			ctx.lineTo(this.x+this.w, this.y+this.h);
+			ctx.stroke();
 		}
 
 		//Check bottom
 		cX = ((this.x+this.w) + (this.x)) / 2;
 		cY = ((this.y+this.h) + (this.y+this.h)) / 2;
-		if( getDistance(x, y, cX, cY) <= 20 ) {
-			this.hBottom = true;
-		}
-		else {
-			this.hBottom = false;
+		if( getDistance(x, y, cX, cY) <= 20 && !this.bottom ) {
+			ctx.strokeStyle = "#9999FF";
+			ctx.beginPath();
+			ctx.moveTo(this.x+this.w, this.y+this.h);
+			ctx.lineTo(this.x, this.y+this.h);
+			ctx.stroke();
 		}
 
 		//Check left
 		cX = ((this.x) + (this.x)) / 2;
 		cY = ((this.y+this.h) + (this.y)) / 2;
-		if( getDistance(x, y, cX, cY) <= 20 ) {
-			this.hLeft = true;
-		}
-		else {
-			this.hLeft = false;
+		if( getDistance(x, y, cX, cY) <= 20 && !this.left ) {
+			ctx.strokeStyle = "#9999FF";
+			ctx.beginPath();
+			ctx.moveTo(this.x, this.y+this.h);
+			ctx.lineTo(this.x, this.y);
+			ctx.stroke();
 		}
 	}
 
@@ -124,44 +122,39 @@ class Box {
 	 * 
 	 * @param {*} x 
 	 * @param {*} y 
-	 * @param {*} who 
 	 */
-	checkClick(x, y, who) {
+	checkClick(x, y) {
 		if( this.complete ) {
-			return;
+			return 0;
 		}
 		//Check top
 		let cX = ((this.x) + (this.x+this.w)) / 2;
 		let cY = ((this.y) + (this.y)) / 2;
 		if( getDistance(x, y, cX, cY) <= 20 && !this.top ) {
-			this.doMove(1, who);
-			return true;
+			return 1;
 		}
 
 		//Check right
 		cX = ((this.x+this.w) + (this.x+this.w)) / 2;
 		cY = ((this.y) + (this.y+this.h)) / 2;
 		if( getDistance(x, y, cX, cY) <= 20 && !this.right ) {
-			this.doMove(2, who);
-			return true;
+			return 2;
 		}
 
 		//Check bottom
 		cX = ((this.x+this.w) + (this.x)) / 2;
 		cY = ((this.y+this.h) + (this.y+this.h)) / 2;
 		if( getDistance(x, y, cX, cY) <= 20 && !this.bottom ) {
-			this.doMove(3, who);
-			return true;
+			return 3;
 		}
 
 		//Check left
 		cX = ((this.x) + (this.x)) / 2;
 		cY = ((this.y+this.h) + (this.y)) / 2;
 		if( getDistance(x, y, cX, cY) <= 20 && !this.left ) {
-			this.doMove(4, who);
-			return true;
+			return 4;
 		}
-		return false;
+		return 0;
 	}
 
 	/**
@@ -173,15 +166,16 @@ class Box {
 	 */
 	doMove(whichBorder, who) {
 		if( this.complete ) {
-			return;
+			return false;
 		}
+		let wasCompletedNow = false;
 		switch(whichBorder) {
 			case 1: 
 				this.top = true;
 				//Also do the Bottom of the box on the top
 				if( this.topBox !== undefined && !this.topBox.bottom ) {
 					this.topBox.bottom = true;
-					this.topBox.checkIfComplete(who);
+					wasCompletedNow = wasCompletedNow || this.topBox.checkIfComplete(who);
 				}
 				break;
 			case 2: 
@@ -189,7 +183,7 @@ class Box {
 				//Also do the Left of the box on the right
 				if( this.rightBox !== undefined && !this.rightBox.left ) {
 					this.rightBox.left = true;
-					this.rightBox.checkIfComplete(who);
+					wasCompletedNow = wasCompletedNow || this.rightBox.checkIfComplete(who);
 				}
 				break;
 			case 3: 
@@ -197,7 +191,7 @@ class Box {
 				//Also do the Top of the box on the bottom
 				if( this.bottomBox !== undefined && !this.bottomBox.top ) {
 					this.bottomBox.top = true;
-					this.bottomBox.checkIfComplete(who);
+					wasCompletedNow = wasCompletedNow || this.bottomBox.checkIfComplete(who);
 				}
 				break;
 			case 4: 
@@ -205,24 +199,74 @@ class Box {
 				//Also do the Right of the box on the Left
 				if( this.leftBox !== undefined && !this.leftBox.right ) {
 					this.leftBox.right = true;
-					this.leftBox.checkIfComplete(who);
+					wasCompletedNow = wasCompletedNow || this.leftBox.checkIfComplete(who);
 				}
 				break;
 		}
-		this.checkIfComplete(who);
+		//Do you know why this.checkIfComplete(who) is evaulated first?
+		//answr in the comments
+		return this.checkIfComplete(who) || wasCompletedNow;
+	}
+
+	/**
+	 * Undoes a move
+	 * 
+	 * @param {*} whichBorder 
+	 */
+	undoMove(whichBorder) {
+		this.complete = false;
+		switch(whichBorder) {
+			case 1: 
+				this.top = false;
+				//Also do the Bottom of the box on the top
+				if( this.topBox !== undefined ) {
+					this.topBox.bottom = false;
+					this.topBox.complete = false;
+
+				}
+				break;
+			case 2: 
+				this.right = false;
+				//Also do the Left of the box on the right
+				if( this.rightBox !== undefined ) {
+					this.rightBox.left = false;
+					this.rightBox.complete = false;
+				}
+				break;
+			case 3: 
+				this.bottom = false;
+				//Also do the Top of the box on the bottom
+				if( this.bottomBox !== undefined ) {
+					this.bottomBox.top = false;
+					this.bottomBox.complete = false;
+				}
+				break;
+			case 4: 
+				this.left = false;
+				//Also do the Right of the box on the Left
+				if( this.leftBox !== undefined ) {
+					this.leftBox.right = false;
+					this.leftBox.complete = false;
+				}
+				break;
+		}
 	}
 
 	/**
 	 * Check if the current box is complete and set who
 	 * completed it.
 	 * 
+	 * Returns true ONLY if the box was completed with the current move
+	 * 
 	 * @param {*} who 
 	 */
 	checkIfComplete(who) {
+		let wasAlreadyComlete = this.complete;
 		if( this.top && this.right && this.bottom && this.left ) {
 			this.complete = true;
 			this.completedBy = who;
 		}
+		return !wasAlreadyComlete && this.complete;
 	}
 
 	/**
@@ -239,12 +283,7 @@ class Box {
 			ctx.strokeStyle = "#CC0000";
 		}
 		else {
-			if( this.hTop ) {
-				ctx.strokeStyle = "#9999FF";
-			}
-			else {
-				ctx.strokeStyle = "#E1E1E1";
-			}
+			ctx.strokeStyle = "#E1E1E1";
 		}
 		ctx.beginPath();
 		ctx.moveTo(this.x, this.y);
@@ -256,12 +295,7 @@ class Box {
 			ctx.strokeStyle = "#CC0000";
 		}
 		else {
-			if( this.hRight ) {
-				ctx.strokeStyle = "#9999FF";
-			}
-			else {
-				ctx.strokeStyle = "#E1E1E1";
-			}
+			ctx.strokeStyle = "#E1E1E1";
 		}
 		ctx.beginPath();
 		ctx.moveTo(this.x+this.w, this.y);
@@ -273,12 +307,7 @@ class Box {
 			ctx.strokeStyle = "#CC0000";
 		}
 		else {
-			if( this.hBottom ) {
-				ctx.strokeStyle = "#9999FF";
-			}
-			else {
-				ctx.strokeStyle = "#E1E1E1";
-			}
+			ctx.strokeStyle = "#E1E1E1";
 		}
 		ctx.beginPath();
 		ctx.moveTo(this.x+this.w, this.y+this.h);
@@ -290,12 +319,7 @@ class Box {
 			ctx.strokeStyle = "#CC0000";
 		}
 		else {
-			if( this.hLeft ) {
-				ctx.strokeStyle = "#9999FF";
-			}
-			else {
-				ctx.strokeStyle = "#E1E1E1";
-			}
+			ctx.strokeStyle = "#E1E1E1";
 		}
 		ctx.beginPath();
 		ctx.moveTo(this.x, this.y+this.h);
@@ -338,4 +362,37 @@ class Box {
 		}
 	}
 
+	reset() {
+		this.top    = false;
+		this.right  = false;
+		this.bottom = false;
+		this.left   = false;
+
+		this.complete = false;
+		this.completedBy = "";
+	}
+
+	clone() {
+		let clonedBox = new Box();
+
+		clonedBox.x = this.x;
+		clonedBox.y = this.y;
+		clonedBox.w = this.w;
+		clonedBox.h = this.h;
+
+		clonedBox.top    = this.top;
+		clonedBox.right  = this.right;
+		clonedBox.bottom = this.bottom;
+		clonedBox.left   = this.left;
+
+		clonedBox.complete = this.complete;
+		clonedBox.completedBy = this.completedBy;
+
+		clonedBox.topBox = this.topBox;
+		clonedBox.rightBox = this.rightBox;
+		clonedBox.bottomBox = this.bottomBox;
+		clonedBox.leftBox = this.leftBox;
+
+		return clonedBox;
+	}
 }

@@ -1,8 +1,9 @@
 //Constants
-const NUMBER_OF_BOXES = 7;
-const PADDING = 30;
-const HUMAN_PLAYER = "Human"
+const NUMBER_OF_BOXES = 3; //<-- Although this can  be even, making this an odd number will ensure a victor each time.
+const PADDING         = 30;
+const HUMAN_PLAYER    = "Human"
 const COMPUTER_PLAYER = "Computer"
+const DRAW            = "Draw"
 
 //GLOBALS
 var ctx;
@@ -10,24 +11,17 @@ var width, height;
 
 var boxes = new Array();
 
-var players = {
-    "Human": 0,
-    "Computer": 0,
-};
-
 var currentPlayer = HUMAN_PLAYER;
 
 var statusDiv, currPlyrDiv, resultDiv;
 
 function animInit() {
-    var theCanvas = document.getElementById("aCanvas");
+    let theCanvas = document.getElementById("aCanvas");
     ctx = theCanvas.getContext("2d");
 
     width = theCanvas.width;
     height = theCanvas.height;
     
-    ctx.font = "20px sans-Serif";
-
     statusDiv = document.getElementById("status");
     currPlyrDiv = document.getElementById("currPlyr");
     resultDiv = document.getElementById("result");
@@ -48,6 +42,10 @@ function animInit() {
         x = PADDING;
         y += h;
     }
+
+    let fontSize = parseInt(w / 5);
+    fontSize = fontSize < 12 ? 12 : fontSize;
+    ctx.font = fontSize + "px sans-Serif";
 
     //Set Neighbours
     for(let i=0; i<NUMBER_OF_BOXES; i++) {
@@ -75,19 +73,19 @@ function animInit() {
     }
 
     theCanvas.addEventListener("mousemove", function(event) {
-        if( isGameOver() ) {
+        if( isGameOver(boxes) != null ) {
             return;
         }
+        render();
         let mLoc = getRealMousePosition(event, theCanvas);
         let mX = mLoc.x;
         let mY = mLoc.y;
         for(let i=0; i<boxes.length; i++) {
             for(let j=0; j<boxes[i].length; j++) {
                 let aBox = boxes[i][j];
-                aBox.checkMouseMovement(mX, mY);
+                aBox.checkMouseMovement(mX, mY, ctx);
             }
         }
-        render();
     });
 
     theCanvas.addEventListener("click", function(event) {
@@ -101,29 +99,29 @@ function animInit() {
         for(let i=0; i<boxes.length; i++) {
             for(let j=0; j<boxes[i].length; j++) {
                 let aBox = boxes[i][j];
-                if( aBox.checkClick(mX, mY, HUMAN_PLAYER) ) {
+                let whichSide = aBox.checkClick(mX, mY);
+                if( whichSide != 0 ) {
+                    let completedThisMove = aBox.doMove(whichSide, HUMAN_PLAYER);
                     //If the human just completed a move, then
                     //its still the human's move.
-                    console.log(i, j, aBox.complete);
-                    if( aBox.complete ) {
+                    if( completedThisMove ) {
                         currentPlayer = HUMAN_PLAYER;
                     }
                     else {
                         currentPlayer = COMPUTER_PLAYER;
                         doneHumanMove = true;
                     }
+                    break;
                 }
             }
         }
-        console.log(currentPlayer);
-        if( isGameOver() ) {
-            doGameOver();
+        if( isGameOver(boxes) != null ) {
             render();
             return;
         }
         if( doneHumanMove ) {
             updateStatus("Playing", currentPlayer, "");
-            //DO COmputer move
+            //DO Computer move
             setTimeout(function() {
                 doComputerMove();
             }, 200);
@@ -139,20 +137,10 @@ function resetBoard() {
     currentPlayer = HUMAN_PLAYER;
     for(let i=0; i<boxes.length; i++) {
         for(let j=0; j<boxes[i].length; j++) {
-            boxes[i][j].top    = false;
-            boxes[i][j].right  = false;
-            boxes[i][j].bottom = false;
-            boxes[i][j].left   = false;
-    
-            boxes[i][j].hTop    = false;
-            boxes[i][j].hRight  = false;
-            boxes[i][j].hBottom = false;
-            boxes[i][j].hLeft   = false;
-    
-            boxes[i][j].complete = false;
-            boxes[i][j].completedBy = "";
+            boxes[i][j].reset();
         }
     }
+
     updateStatus("Playing", currentPlayer, "");
     render();
 }
@@ -182,17 +170,17 @@ function doComputerMove() {
         }
     } while( !moveAvailable );
 
-    boxes[row][col].doMove(whichSide, COMPUTER_PLAYER);
+    let completedThisMove = boxes[row][col].doMove(whichSide, COMPUTER_PLAYER);
     render();
 
-    if( isGameOver() ) {
+    if( isGameOver(boxes) != null ) {
         return;
     }
 
     //If the computer just completed a move, do it again.
-    if( boxes[row][col].complete ) {
+    if( completedThisMove ) {
         currentPlayer = COMPUTER_PLAYER;
-        //DO COmputer move
+        //DO Computer move
         setTimeout(function() {
             doComputerMove();
         }, 200);
@@ -200,8 +188,109 @@ function doComputerMove() {
     else {
         currentPlayer = HUMAN_PLAYER;
     }
-    console.log(currentPlayer);
     updateStatus("Playing", currentPlayer, "");
+}
+
+function minimax(boxesSet, isMaximizing, depth) {
+    numMovesToVictory++;
+    //return a draw score if we have reached the target depth
+    //for now we allow for maximum depth of 7.
+    if( depth > 7 ) {
+        return 0;
+    }
+    //Find out if the board is done. If it is done, return 
+    //1 if the computer wins, -1 if the human wins and 0 for draw.
+    let result = isGameOver(boxSet);
+    if (result != null) {
+        if( result == DRAW ) {
+            return 0;
+        }
+        else if( result == COMPUTER_PLAYER ) {//Computer
+            return 1;
+        }
+        else if( result == HUMAN_PLAYER ) {//Human
+            return -1;
+        }
+    }
+
+    //If the computer moves
+    if ( isMaximizing ) {
+        let bestScore = -Infinity;
+        for (let i=0; i<boxesSet.length; i++) {
+            for (let j=0; j<boxesSet[i].length; j++) {
+                //TO DO
+                //If the place on the board is empty, 
+                //then place a piece on it and call (recursion)
+                //minimax on it.
+                if ( !boxesSet[i][j].complete ) {
+                    if( !boxesSet[i][j].top  ) {
+                        boxesSet[i][j].doMove(1, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, false, depth+1);
+                        boxesSet[i][j].undoMove(1);
+                        bestScore = Math.max(score, bestScore);
+                    }
+                    else if( !boxesSet[i][j].right  ) {
+                        boxesSet[i][j].doMove(2, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, false, depth+1);
+                        boxesSet[i][j].undoMove(2);
+                        bestScore = Math.max(score, bestScore);
+                    }
+                    else if( !boxesSet[i][j].bottom  ) {
+                        boxesSet[i][j].doMove(3, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, false, depth+1);
+                        boxesSet[i][j].undoMove(3);
+                        bestScore = Math.max(score, bestScore);
+                    }
+                    else if( !boxesSet[i][j].left  ) {
+                        boxesSet[i][j].doMove(4, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, false, depth+1);
+                        boxesSet[i][j].undoMove(4);
+                        bestScore = Math.max(score, bestScore);
+                    }
+                }
+            }
+        }
+        return bestScore;
+    } 
+    //Play for the human.
+    else {
+        let bestScore = Infinity;
+        for (let i=0; i<boxesSet.length; i++) {
+            for (let j=0; j<boxesSet[i].length; j++) {
+                //TO DO
+                //If the place on the board is empty, 
+                //then place a piece on it and call (recursion)
+                //minimax on it.
+                if ( !boxesSet[i][j].complete ) {
+                    if( !boxesSet[i][j].top  ) {
+                        boxesSet[i][j].doMove(1, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, true, depth+1);
+                        boxesSet[i][j].undoMove(1);
+                        bestScore = Math.min(score, bestScore);
+                    }
+                    else if( !boxesSet[i][j].right  ) {
+                        boxesSet[i][j].doMove(2, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, true, depth+1);
+                        boxesSet[i][j].undoMove(2);
+                        bestScore = Math.min(score, bestScore);
+                    }
+                    else if( !boxesSet[i][j].bottom  ) {
+                        boxesSet[i][j].doMove(3, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, true, depth+1);
+                        boxesSet[i][j].undoMove(3);
+                        bestScore = Math.min(score, bestScore);
+                    }
+                    else if( !boxesSet[i][j].left  ) {
+                        boxesSet[i][j].doMove(4, COMPUTER_PLAYER);
+                        let score = minimax(boxesSet, true, depth+1);
+                        boxesSet[i][j].undoMove(4);
+                        bestScore = Math.min(score, bestScore);
+                    }
+                }
+            }
+        }
+        return bestScore;
+    }
 }
 
 function render() {
@@ -217,47 +306,49 @@ function render() {
         }
     }
 
-    if( isGameOver() ) {
-        doGameOver();
+    let result = isGameOver(boxes);
+    if( result != null ) {
+        updateStatus("Game Over", "", result + " won");
         return;
     }
 }
 
-function isGameOver() {
-    for(let i=0; i<boxes.length; i++) {
-        for(let j=0; j<boxes[i].length; j++) {
-            if( !boxes[i][j].complete ) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-function doGameOver() {
-    players = {
+/**
+ * A function that checks if the game is done and who has won.
+ * Will return one of three values
+ * 1. HUMAN
+ * 2. COMPUTER
+ * 3. DRAW
+ * 
+ * returns null if game not over.
+ * 
+ * @param {*} boxSet 
+ * @returns 
+ */
+function isGameOver(boxSet) {
+    let players = {
         "Human": 0,
         "Computer": 0,
     };
-    for(let i=0; i<boxes.length; i++) {
-        for(let j=0; j<boxes[i].length; j++) {
-            if( boxes[i][j].complete ) {
+    for(let i=0; i<boxSet.length; i++) {
+        for(let j=0; j<boxSet[i].length; j++) {
+            if( boxSet[i][j].complete ) {
                 players[boxes[i][j].completedBy]++;
+            }
+            else {
+                return null;
             }
         }
     }
-    //console.log("Game over", players);
+
     if( players[COMPUTER_PLAYER] > players[HUMAN_PLAYER] ) {
-        //console.log(COMPUTER_PLAYER + " won with " + players[COMPUTER_PLAYER] + " boxes");
-        updateStatus("Game Over", "", COMPUTER_PLAYER + " won with " + players[COMPUTER_PLAYER] + " boxes");
+        return COMPUTER_PLAYER;
     }
     else if( players[COMPUTER_PLAYER] < players[HUMAN_PLAYER] ) {
-        //console.log(HUMAN_PLAYER + " won with " + players[HUMAN_PLAYER] + " boxes");
-        updateStatus("Game Over", "", HUMAN_PLAYER + " won with " + players[HUMAN_PLAYER] + " boxes");
+        return HUMAN_PLAYER;
     }
     else {
-        updateStatus("Game Over", "", "Draw.");
+        return DRAW;
     }
 }
 
@@ -265,4 +356,17 @@ function updateStatus(status, currPlayer, whoWon) {
     statusDiv.innerHTML = status;
     currPlyrDiv.innerHTML = currPlayer;
     resultDiv.innerHTML = whoWon;
+}
+
+function cloneBoxes(boxSet) {
+    let clonedBoxes = new Array();
+
+    for(let i=0; i<boxSet.length; i++) {
+        cloneBoxes[i] = new Array(boxSet[i].length);
+        for(let j=0; j<boxSet[i].length; j++) {
+            cloneBoxes[i][j] = boxSet[i][j].clone();
+        }
+    }
+
+    return clonedBoxes;
 }
