@@ -1,5 +1,5 @@
 //Constants
-const NUMBER_OF_BOXES = 3; //<-- Although this can  be even, making this an odd number will ensure a victor each time.
+const NUMBER_OF_BOXES = 2; //<-- Although this can  be even, making this an odd number will ensure a victor each time.
 const PADDING         = 30;
 const HUMAN_PLAYER    = "Human"
 const COMPUTER_PLAYER = "Computer"
@@ -14,6 +14,8 @@ var boxes = new Array();
 var currentPlayer = HUMAN_PLAYER;
 
 var statusDiv, currPlyrDiv, resultDiv;
+
+var numMovesToVictory = 0;
 
 function animInit() {
     let theCanvas = document.getElementById("aCanvas");
@@ -149,28 +151,104 @@ function doComputerMove() {
     if( currentPlayer == HUMAN_PLAYER ) {
         return;
     }
-    let row = 0, col = 0, whichSide = 0;
-    let moveAvailable = true;
-    do {
-        row = parseInt( randomBetween(0, NUMBER_OF_BOXES) );
-        col = parseInt( randomBetween(0, NUMBER_OF_BOXES) );
-        whichSide = parseInt( randomBetween(1, 5) );
-        moveAvailable = true;
-        if( whichSide == 1 && boxes[row][col].top ) {
-            moveAvailable = false;
-        }
-        else if( whichSide == 2 && boxes[row][col].right ) {
-            moveAvailable = false;
-        }
-        else if( whichSide == 3 && boxes[row][col].bottom ) {
-            moveAvailable = false;
-        }
-        else if( whichSide == 4 && boxes[row][col].left ) {
-            moveAvailable = false;
-        }
-    } while( !moveAvailable );
 
-    let completedThisMove = boxes[row][col].doMove(whichSide, COMPUTER_PLAYER);
+    let bestScore = -Infinity;
+    let leastMoves = Infinity
+    let bestRow  = -1;
+    let bestCol  = -1;
+    let bestSide = -1;
+    //We'll copy the contents of the game board to a new copy
+    //That way we won't pollute the existing board.
+    let boxesCopy = cloneBoxes(boxes);
+    for(let i=0; i<boxesCopy.length; i++) {
+        for(let j=0; j<boxesCopy[i].length; j++) {
+            if( !boxesCopy[i][j].complete ) {
+                if( !boxesCopy[i][j].top ) {
+                    let whichSide = -1;
+                    numMovesToVictory = 0;
+    
+                    boxesCopy[i][j].doMove(1, COMPUTER_PLAYER);
+                    let score = minimax(boxesCopy, false, 0);
+                    whichSide = 1;
+                    boxesCopy[i][j].undoMove(1);
+                    //bestScore = Math.max(score, bestScore);
+                    if( score > 0 && leastMoves > numMovesToVictory ) {
+                        leastMoves = numMovesToVictory;
+                        score += 10/numMovesToVictory;//Arbitary.
+                    }
+                    if( score > bestScore ) {
+                        bestScore = score;
+                        bestRow = i;
+                        bestCol = j;
+                        bestSide = whichSide;
+                    }
+                }
+                if( !boxesCopy[i][j].right ) {
+                    let whichSide = -1;
+                    numMovesToVictory = 0;
+
+                    boxesCopy[i][j].doMove(2, COMPUTER_PLAYER);
+                    let score = minimax(boxesCopy, false, 0);
+                    whichSide = 2;
+                    boxesCopy[i][j].undoMove(2);
+                    //bestScore = Math.max(score, bestScore);
+                    if( score > 0 && leastMoves > numMovesToVictory ) {
+                        leastMoves = numMovesToVictory;
+                        score += 10/numMovesToVictory;//Arbitary.
+                    }
+                    if( score > bestScore ) {
+                        bestScore = score;
+                        bestRow = i;
+                        bestCol = j;
+                        bestSide = whichSide;
+                    }    
+                }
+                if( !boxesCopy[i][j].bottom ) {
+                    let whichSide = -1;
+                    numMovesToVictory = 0;
+
+                    boxesCopy[i][j].doMove(3, COMPUTER_PLAYER);
+                    let score = minimax(boxesCopy, false, 0);
+                    whichSide = 3;
+                    boxesCopy[i][j].undoMove(3);
+                    //bestScore = Math.max(score, bestScore);
+                    if( score > 0 && leastMoves > numMovesToVictory ) {
+                        leastMoves = numMovesToVictory;
+                        score += 10/numMovesToVictory;//Arbitary.
+                    }
+                    if( score > bestScore ) {
+                        bestScore = score;
+                        bestRow = i;
+                        bestCol = j;
+                        bestSide = whichSide;
+                    }    
+                }
+                if( !boxesCopy[i][j].left ) {
+                    let whichSide = -1;
+                    numMovesToVictory = 0;
+
+                    boxesCopy[i][j].doMove(4, COMPUTER_PLAYER);
+                    let score = minimax(boxesCopy, false, 0);
+                    whichSide = 4;
+                    boxesCopy[i][j].undoMove(4);
+                    //bestScore = Math.max(score, bestScore);
+                    if( score > 0 && leastMoves > numMovesToVictory ) {
+                        leastMoves = numMovesToVictory;
+                        score += 10/numMovesToVictory;//Arbitary.
+                    }
+                    if( score > bestScore ) {
+                        bestScore = score;
+                        bestRow = i;
+                        bestCol = j;
+                        bestSide = whichSide;
+                    }    
+                }
+            }
+        }
+    }
+
+    console.log(bestRow, bestCol, bestSide, bestScore);
+    let completedThisMove = boxes[bestRow][bestCol].doMove(bestSide, COMPUTER_PLAYER);
     render();
 
     if( isGameOver(boxes) != null ) {
@@ -195,12 +273,13 @@ function minimax(boxesSet, isMaximizing, depth) {
     numMovesToVictory++;
     //return a draw score if we have reached the target depth
     //for now we allow for maximum depth of 7.
-    if( depth > 7 ) {
+    //Minimum depth should be 3
+    if( depth > 6 ) {
         return 0;
     }
     //Find out if the board is done. If it is done, return 
     //1 if the computer wins, -1 if the human wins and 0 for draw.
-    let result = isGameOver(boxSet);
+    let result = isGameOver(boxesSet);
     if (result != null) {
         if( result == DRAW ) {
             return 0;
@@ -218,30 +297,29 @@ function minimax(boxesSet, isMaximizing, depth) {
         let bestScore = -Infinity;
         for (let i=0; i<boxesSet.length; i++) {
             for (let j=0; j<boxesSet[i].length; j++) {
-                //TO DO
                 //If the place on the board is empty, 
                 //then place a piece on it and call (recursion)
                 //minimax on it.
                 if ( !boxesSet[i][j].complete ) {
-                    if( !boxesSet[i][j].top  ) {
+                    if( !boxesSet[i][j].top ) {
                         boxesSet[i][j].doMove(1, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
                         boxesSet[i][j].undoMove(1);
                         bestScore = Math.max(score, bestScore);
                     }
-                    else if( !boxesSet[i][j].right  ) {
+                    if( !boxesSet[i][j].right ) {
                         boxesSet[i][j].doMove(2, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
                         boxesSet[i][j].undoMove(2);
                         bestScore = Math.max(score, bestScore);
                     }
-                    else if( !boxesSet[i][j].bottom  ) {
+                    if( !boxesSet[i][j].bottom ) {
                         boxesSet[i][j].doMove(3, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
                         boxesSet[i][j].undoMove(3);
                         bestScore = Math.max(score, bestScore);
                     }
-                    else if( !boxesSet[i][j].left  ) {
+                    if( !boxesSet[i][j].left ) {
                         boxesSet[i][j].doMove(4, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
                         boxesSet[i][j].undoMove(4);
@@ -257,31 +335,30 @@ function minimax(boxesSet, isMaximizing, depth) {
         let bestScore = Infinity;
         for (let i=0; i<boxesSet.length; i++) {
             for (let j=0; j<boxesSet[i].length; j++) {
-                //TO DO
                 //If the place on the board is empty, 
                 //then place a piece on it and call (recursion)
                 //minimax on it.
                 if ( !boxesSet[i][j].complete ) {
                     if( !boxesSet[i][j].top  ) {
-                        boxesSet[i][j].doMove(1, COMPUTER_PLAYER);
+                        boxesSet[i][j].doMove(1, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
                         boxesSet[i][j].undoMove(1);
                         bestScore = Math.min(score, bestScore);
                     }
-                    else if( !boxesSet[i][j].right  ) {
-                        boxesSet[i][j].doMove(2, COMPUTER_PLAYER);
+                    if( !boxesSet[i][j].right  ) {
+                        boxesSet[i][j].doMove(2, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
                         boxesSet[i][j].undoMove(2);
                         bestScore = Math.min(score, bestScore);
                     }
-                    else if( !boxesSet[i][j].bottom  ) {
-                        boxesSet[i][j].doMove(3, COMPUTER_PLAYER);
+                    if( !boxesSet[i][j].bottom  ) {
+                        boxesSet[i][j].doMove(3, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
                         boxesSet[i][j].undoMove(3);
                         bestScore = Math.min(score, bestScore);
                     }
-                    else if( !boxesSet[i][j].left  ) {
-                        boxesSet[i][j].doMove(4, COMPUTER_PLAYER);
+                    if( !boxesSet[i][j].left  ) {
+                        boxesSet[i][j].doMove(4, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
                         boxesSet[i][j].undoMove(4);
                         bestScore = Math.min(score, bestScore);
@@ -362,9 +439,9 @@ function cloneBoxes(boxSet) {
     let clonedBoxes = new Array();
 
     for(let i=0; i<boxSet.length; i++) {
-        cloneBoxes[i] = new Array(boxSet[i].length);
+        clonedBoxes[i] = new Array(boxSet[i].length);
         for(let j=0; j<boxSet[i].length; j++) {
-            cloneBoxes[i][j] = boxSet[i][j].clone();
+            clonedBoxes[i][j] = boxSet[i][j].clone();
         }
     }
 

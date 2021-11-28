@@ -215,6 +215,7 @@ class Box {
 	 */
 	undoMove(whichBorder) {
 		this.complete = false;
+		this.completedBy = "";
 		switch(whichBorder) {
 			case 1: 
 				this.top = false;
@@ -222,7 +223,7 @@ class Box {
 				if( this.topBox !== undefined ) {
 					this.topBox.bottom = false;
 					this.topBox.complete = false;
-
+					this.topBox.completedBy = "";
 				}
 				break;
 			case 2: 
@@ -231,6 +232,7 @@ class Box {
 				if( this.rightBox !== undefined ) {
 					this.rightBox.left = false;
 					this.rightBox.complete = false;
+					this.rightBox.completedBy = "";
 				}
 				break;
 			case 3: 
@@ -239,6 +241,7 @@ class Box {
 				if( this.bottomBox !== undefined ) {
 					this.bottomBox.top = false;
 					this.bottomBox.complete = false;
+					this.bottomBox.completedBy = "";
 				}
 				break;
 			case 4: 
@@ -247,6 +250,7 @@ class Box {
 				if( this.leftBox !== undefined ) {
 					this.leftBox.right = false;
 					this.leftBox.complete = false;
+					this.leftBox.completedBy = "";
 				}
 				break;
 		}
