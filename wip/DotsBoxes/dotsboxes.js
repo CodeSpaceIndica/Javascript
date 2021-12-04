@@ -1,5 +1,5 @@
 //Constants
-const NUMBER_OF_BOXES = 2; //<-- Although this can  be even, making this an odd number will ensure a victor each time.
+const NUMBER_OF_BOXES = 3; //<-- Although this can  be even, making this an odd number will ensure a victor each time.
 const PADDING         = 30;
 const HUMAN_PLAYER    = "Human"
 const COMPUTER_PLAYER = "Computer"
@@ -50,32 +50,10 @@ function animInit() {
     ctx.font = fontSize + "px sans-Serif";
 
     //Set Neighbours
-    for(let i=0; i<NUMBER_OF_BOXES; i++) {
-        for(let j=0; j<NUMBER_OF_BOXES; j++) {
-            let t = undefined;
-            let r = undefined;
-            let b = undefined;
-            let l = undefined;
-
-            if( i-1 >= 0 ) {
-                t = boxes[i-1][j];
-            }
-            if( j+1 <= NUMBER_OF_BOXES-1 ) {
-                r = boxes[i][j+1];
-            }
-            if( i+1 <= NUMBER_OF_BOXES-1 ) {
-                b = boxes[i+1][j];
-            }
-            if( j-1 >= 0 ) {
-                l = boxes[i][j-1];
-            }
-
-            boxes[i][j].setNeighbours(t, r, b, l);
-        }
-    }
+    setNeighbours(boxes);
 
     theCanvas.addEventListener("mousemove", function(event) {
-        if( isGameOver(boxes) != null ) {
+        if( isGameOver(boxes) ) {
             return;
         }
         render();
@@ -117,7 +95,7 @@ function animInit() {
                 }
             }
         }
-        if( isGameOver(boxes) != null ) {
+        if( isGameOver(boxes) ) {
             render();
             return;
         }
@@ -132,6 +110,7 @@ function animInit() {
     });
 
     updateStatus("Playing", currentPlayer, "");
+
     render();
 }
 
@@ -160,18 +139,16 @@ function doComputerMove() {
     //We'll copy the contents of the game board to a new copy
     //That way we won't pollute the existing board.
     let boxesCopy = cloneBoxes(boxes);
+    setNeighbours(boxesCopy);
     for(let i=0; i<boxesCopy.length; i++) {
         for(let j=0; j<boxesCopy[i].length; j++) {
             if( !boxesCopy[i][j].complete ) {
                 if( !boxesCopy[i][j].top ) {
-                    let whichSide = -1;
                     numMovesToVictory = 0;
     
                     boxesCopy[i][j].doMove(1, COMPUTER_PLAYER);
                     let score = minimax(boxesCopy, false, 0);
-                    whichSide = 1;
                     boxesCopy[i][j].undoMove(1);
-                    //bestScore = Math.max(score, bestScore);
                     if( score > 0 && leastMoves > numMovesToVictory ) {
                         leastMoves = numMovesToVictory;
                         score += 10/numMovesToVictory;//Arbitary.
@@ -180,18 +157,15 @@ function doComputerMove() {
                         bestScore = score;
                         bestRow = i;
                         bestCol = j;
-                        bestSide = whichSide;
+                        bestSide = 1;
                     }
                 }
                 if( !boxesCopy[i][j].right ) {
-                    let whichSide = -1;
                     numMovesToVictory = 0;
 
                     boxesCopy[i][j].doMove(2, COMPUTER_PLAYER);
                     let score = minimax(boxesCopy, false, 0);
-                    whichSide = 2;
                     boxesCopy[i][j].undoMove(2);
-                    //bestScore = Math.max(score, bestScore);
                     if( score > 0 && leastMoves > numMovesToVictory ) {
                         leastMoves = numMovesToVictory;
                         score += 10/numMovesToVictory;//Arbitary.
@@ -200,18 +174,15 @@ function doComputerMove() {
                         bestScore = score;
                         bestRow = i;
                         bestCol = j;
-                        bestSide = whichSide;
-                    }    
+                        bestSide = 2;
+                    }
                 }
                 if( !boxesCopy[i][j].bottom ) {
-                    let whichSide = -1;
                     numMovesToVictory = 0;
 
                     boxesCopy[i][j].doMove(3, COMPUTER_PLAYER);
                     let score = minimax(boxesCopy, false, 0);
-                    whichSide = 3;
                     boxesCopy[i][j].undoMove(3);
-                    //bestScore = Math.max(score, bestScore);
                     if( score > 0 && leastMoves > numMovesToVictory ) {
                         leastMoves = numMovesToVictory;
                         score += 10/numMovesToVictory;//Arbitary.
@@ -220,18 +191,15 @@ function doComputerMove() {
                         bestScore = score;
                         bestRow = i;
                         bestCol = j;
-                        bestSide = whichSide;
-                    }    
+                        bestSide = 3;
+                    }
                 }
                 if( !boxesCopy[i][j].left ) {
-                    let whichSide = -1;
                     numMovesToVictory = 0;
 
                     boxesCopy[i][j].doMove(4, COMPUTER_PLAYER);
                     let score = minimax(boxesCopy, false, 0);
-                    whichSide = 4;
                     boxesCopy[i][j].undoMove(4);
-                    //bestScore = Math.max(score, bestScore);
                     if( score > 0 && leastMoves > numMovesToVictory ) {
                         leastMoves = numMovesToVictory;
                         score += 10/numMovesToVictory;//Arbitary.
@@ -240,18 +208,18 @@ function doComputerMove() {
                         bestScore = score;
                         bestRow = i;
                         bestCol = j;
-                        bestSide = whichSide;
-                    }    
+                        bestSide = 4;
+                    }
                 }
             }
         }
     }
 
-    console.log(bestRow, bestCol, bestSide, bestScore);
+    console.log(bestRow, bestCol, "Side :" + bestSide, "Score :" + bestScore);
     let completedThisMove = boxes[bestRow][bestCol].doMove(bestSide, COMPUTER_PLAYER);
     render();
 
-    if( isGameOver(boxes) != null ) {
+    if( isGameOver(boxes) ) {
         return;
     }
 
@@ -274,13 +242,23 @@ function minimax(boxesSet, isMaximizing, depth) {
     //return a draw score if we have reached the target depth
     //for now we allow for maximum depth of 7.
     //Minimum depth should be 3
-    if( depth > 6 ) {
-        return 0;
+    if( depth > 3 ) {
+        let result = whoHasMore(boxesSet);
+        if( result == DRAW ) {
+            return 0;
+        }
+        else if( result == COMPUTER_PLAYER ) {//Computer
+            return 1;
+        }
+        else if( result == HUMAN_PLAYER ) {//Human
+            return -1;
+        }
     }
+
     //Find out if the board is done. If it is done, return 
     //1 if the computer wins, -1 if the human wins and 0 for draw.
-    let result = isGameOver(boxesSet);
-    if (result != null) {
+    if ( isGameOver(boxesSet) ) {
+        let result = whoHasMore(boxesSet);
         if( result == DRAW ) {
             return 0;
         }
@@ -304,24 +282,52 @@ function minimax(boxesSet, isMaximizing, depth) {
                     if( !boxesSet[i][j].top ) {
                         boxesSet[i][j].doMove(1, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(1);
                         bestScore = Math.max(score, bestScore);
                     }
                     if( !boxesSet[i][j].right ) {
                         boxesSet[i][j].doMove(2, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(2);
                         bestScore = Math.max(score, bestScore);
                     }
                     if( !boxesSet[i][j].bottom ) {
                         boxesSet[i][j].doMove(3, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(3);
                         bestScore = Math.max(score, bestScore);
                     }
                     if( !boxesSet[i][j].left ) {
                         boxesSet[i][j].doMove(4, COMPUTER_PLAYER);
                         let score = minimax(boxesSet, false, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(4);
                         bestScore = Math.max(score, bestScore);
                     }
@@ -342,24 +348,52 @@ function minimax(boxesSet, isMaximizing, depth) {
                     if( !boxesSet[i][j].top  ) {
                         boxesSet[i][j].doMove(1, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(1);
                         bestScore = Math.min(score, bestScore);
                     }
                     if( !boxesSet[i][j].right  ) {
                         boxesSet[i][j].doMove(2, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(2);
                         bestScore = Math.min(score, bestScore);
                     }
                     if( !boxesSet[i][j].bottom  ) {
                         boxesSet[i][j].doMove(3, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(3);
                         bestScore = Math.min(score, bestScore);
                     }
                     if( !boxesSet[i][j].left  ) {
                         boxesSet[i][j].doMove(4, HUMAN_PLAYER);
                         let score = minimax(boxesSet, true, depth+1);
+                        let whm = whoHasMore(boxesSet);
+                        if( whm == HUMAN_PLAYER ) {
+                            score--;
+                        }
+                        else if( whm == COMPUTER_PLAYER ) {
+                            score++;
+                        }
                         boxesSet[i][j].undoMove(4);
                         bestScore = Math.min(score, bestScore);
                     }
@@ -383,26 +417,39 @@ function render() {
         }
     }
 
-    let result = isGameOver(boxes);
-    if( result != null ) {
-        updateStatus("Game Over", "", result + " won");
+    if( isGameOver(boxes) ) {
+        let result = whoHasMore(boxes);
+        result = result != DRAW ? result + " won" : DRAW;
+        updateStatus("Game Over", "", result);
         return;
     }
 }
 
 /**
- * A function that checks if the game is done and who has won.
- * Will return one of three values
- * 1. HUMAN
- * 2. COMPUTER
- * 3. DRAW
- * 
- * returns null if game not over.
+ * A function that checks if the game is done/
+ * Will return either true or false.
+  * 
+ * @param {*} boxSet 
+ * @returns 
+ */
+ function isGameOver(boxSet) {
+    for(let i=0; i<boxSet.length; i++) {
+        for(let j=0; j<boxSet[i].length; j++) {
+            if( !boxSet[i][j].complete ) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/**
+ * A function that returns who has more boxes.
  * 
  * @param {*} boxSet 
  * @returns 
  */
-function isGameOver(boxSet) {
+function whoHasMore(boxSet) {
     let players = {
         "Human": 0,
         "Computer": 0,
@@ -410,29 +457,49 @@ function isGameOver(boxSet) {
     for(let i=0; i<boxSet.length; i++) {
         for(let j=0; j<boxSet[i].length; j++) {
             if( boxSet[i][j].complete ) {
-                players[boxes[i][j].completedBy]++;
-            }
-            else {
-                return null;
+                players[boxSet[i][j].completedBy]++;
             }
         }
     }
-
     if( players[COMPUTER_PLAYER] > players[HUMAN_PLAYER] ) {
         return COMPUTER_PLAYER;
     }
     else if( players[COMPUTER_PLAYER] < players[HUMAN_PLAYER] ) {
         return HUMAN_PLAYER;
     }
-    else {
-        return DRAW;
-    }
+    return DRAW;
 }
 
 function updateStatus(status, currPlayer, whoWon) {
     statusDiv.innerHTML = status;
     currPlyrDiv.innerHTML = currPlayer;
     resultDiv.innerHTML = whoWon;
+}
+
+function setNeighbours(boxesSet) {
+    for(let i=0; i<boxesSet.length; i++) {
+        for(let j=0; j<boxesSet[i].length; j++) {
+            let t = undefined;
+            let r = undefined;
+            let b = undefined;
+            let l = undefined;
+
+            if( i-1 >= 0 ) {
+                t = boxesSet[i-1][j];
+            }
+            if( j+1 <= boxesSet[i].length-1 ) {
+                r = boxesSet[i][j+1];
+            }
+            if( i+1 <= boxesSet.length-1 ) {
+                b = boxesSet[i+1][j];
+            }
+            if( j-1 >= 0 ) {
+                l = boxesSet[i][j-1];
+            }
+
+            boxesSet[i][j].setNeighbours(t, r, b, l);
+        }
+    }
 }
 
 function cloneBoxes(boxSet) {
