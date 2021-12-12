@@ -195,7 +195,7 @@ class Box {
 				}
 				break;
 			case 4: 
-				this.left= true;
+				this.left = true;
 				//Also do the Right of the box on the Left
 				if( this.leftBox !== undefined && !this.leftBox.right ) {
 					this.leftBox.right = true;
@@ -376,6 +376,12 @@ class Box {
 		this.completedBy = "";
 	}
 
+	/**
+	 * A cloned box. THis will NOT set its neighbours.
+	 * Set its neibours separately.
+	 * 
+	 * @returns 
+	 */
 	clone() {
 		let clonedBox = new Box();
 
@@ -391,11 +397,6 @@ class Box {
 
 		clonedBox.complete = this.complete;
 		clonedBox.completedBy = this.completedBy;
-
-		clonedBox.topBox = this.topBox;
-		clonedBox.rightBox = this.rightBox;
-		clonedBox.bottomBox = this.bottomBox;
-		clonedBox.leftBox = this.leftBox;
 
 		return clonedBox;
 	}
