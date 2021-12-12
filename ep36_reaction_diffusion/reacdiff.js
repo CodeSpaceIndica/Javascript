@@ -20,15 +20,17 @@ var killRate = 0.0628;
  */
 function init() {
     //Init the canvas
-    var canvasElement = document.getElementById("aCanvas");
+    let canvasElement = document.getElementById("aCanvas");
     resizeCanvas(canvasElement, false);
 
     ctx = canvasElement.getContext("2d");
 
-    ctx.scale(4, 4);
-
     width = canvasElement.width;
     height = canvasElement.height;
+
+    let scaleX = width  / GRID_SIZE;
+    let scaleY = height / GRID_SIZE;
+    ctx.scale(scaleX, scaleY);
 
     reactionCanvas = document.createElement("canvas");
     reactionCanvas.width = GRID_SIZE;
@@ -54,8 +56,8 @@ function init() {
         }
     }
 
-    for(let i=90; i<100; i++) {
-        for(let j=90; j<100; j++) {
+    for(let i=95; i<105; i++) {
+        for(let j=95; j<105; j++) {
             currGrid[i][j].b = 1;
         }
     }
@@ -84,12 +86,18 @@ function reactionDiffusion() {
             let pix = (x+y*GRID_SIZE) * 4;
             let a = nextGrid[x][y].a;
             let b = nextGrid[x][y].b;
-            let c = Math.floor( (a-b) * 255);
-            c = c > 255 ? 255 : c;
-            c = c < 0 ? 0 : c;
-            pixelData[pix+0] = c;
-            pixelData[pix+1] = c;
-            pixelData[pix+2] = c;
+            //let c = Math.floor( (a-b) * 255);
+            //c = c > 255 ? 255 : c;
+            //c = c < 0 ? 0 : c;
+            // pixelData[pix+0] = c;
+            // pixelData[pix+1] = c;
+            // pixelData[pix+2] = c;
+            let h = a-b;
+            let rgb = HSLtoRGB(h, 1, 0.5);
+            rgb[0] = rgb[0] == 255 ? 0 : rgb[0];
+            pixelData[pix+0] = rgb[0];
+            pixelData[pix+1] = rgb[1];
+            pixelData[pix+2] = rgb[2];
             pixelData[pix+3] = 255;
         }
     }

@@ -1,13 +1,11 @@
 //https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf
-
-const WIDTH = 800;
-const HEIGHT = 600;
-
 const RADIUS = 5;
 const DIMENSIONS = 2; //This is N
 const MAX_TRIES = 30; //This is the K
 
 var brdCtx;
+
+var width, height
 
 var theGrid = [];
 var points = []; //OUR FINAL POINTS WILL BE HERE.
@@ -19,10 +17,13 @@ function init() {
     var brdCanvas = document.getElementById("brdCanvas");
     brdCtx = brdCanvas.getContext("2d");
 
+    width  = brdCanvas.width;
+    height = brdCanvas.height;
+
     //STEP 0
     var cellSize = RADIUS / Math.sqrt(DIMENSIONS);
-    var cellWidth = Math.ceil(WIDTH / cellSize) + 1;
-    var cellHeight = Math.ceil(HEIGHT / cellSize) + 1;
+    var cellWidth = Math.ceil(width / cellSize) + 1;
+    var cellHeight = Math.ceil(height / cellSize) + 1;
 
     for(var i=0; i<cellWidth;i++) {
         theGrid[i] = [];
@@ -35,8 +36,8 @@ function init() {
 
     //STEP 1
     var rPoint = new Point(
-        randomBetween(0, WIDTH),
-        randomBetween(0, HEIGHT)
+        randomBetween(0, width),
+        randomBetween(0, height)
     );
     points.push(rPoint);
     active.push(rPoint);
@@ -70,12 +71,12 @@ function init() {
 
     brdCtx.fillStyle = "#FFFFFF";
     brdCtx.beginPath();
-    brdCtx.fillRect(0, 0, WIDTH, HEIGHT);
+    brdCtx.fillRect(0, 0, width, height);
     brdCtx.fill();
 
     //brdCtx.fillStyle = "#555555";
 
-    anImage.src = "mountains.jpg";
+    anImage.src = "India.jpg";
     anImage.onload = function() {
         var pattern1 = brdCtx.createPattern(anImage, "repeat");
         brdCtx.fillStyle = pattern1;
@@ -105,7 +106,7 @@ function insertToGrid(point, cellSize) {
 
 function isPointValid(rPoint, cellWidth, cellHeight, cellSize) {
     //not valid If it exceeds canvas dimensions
-    if( rPoint.x < 0 || rPoint.x > WIDTH || rPoint.y < 0 || rPoint.y > HEIGHT ) {
+    if( rPoint.x < 0 || rPoint.x > width || rPoint.y < 0 || rPoint.y > height ) {
         return false;
     }
 

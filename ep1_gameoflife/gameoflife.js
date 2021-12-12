@@ -1,40 +1,38 @@
+const CELL_SIZE = 7;
 
-const WIDTH  = 1000;
-const HEIGHT = 800;
-
-const NUM_CELLS_X = 100;
-const NUM_CELLS_Y = 80;
-
-const DEAD_CELL_COLOR = "#E1E1E1";
-const LIVE_CELL_COLOR = "#FF0000";
-const BORDER_COLOR    = "#999999";
+const DEAD_CELL_COLOR = "#292826";
+const LIVE_CELL_COLOR = "#f9d342";
+const BORDER_COLOR    = "#000000";
 
 const NEIGHBOUR_OFFSETS = [
     [-1,-1],[-1,0],[-1,1],
-    [0,-1],        [0,1],
-    [1,-1], [1,0], [1,1]
+    [0, -1],       [0, 1],
+    [1, -1],[1, 0],[1, 1]
 ]
+
+var canvasContext;
+
+var width, height
 
 var currFrame = new Array();
 var prevFrame = new Array();
 
-var canvasContext;
-
-var xSize, ySize;
-
-function copyFrame() {
-    for(var i=0; i<NUM_CELLS_X; i++) {
-        for(var j=0; j<NUM_CELLS_Y; j++) {
-            prevFrame[i][j] = currFrame[i][j];
-        }
-    }
-}
-
 function init() {
-    for(var i=0; i<NUM_CELLS_X; i++) {
+    var canvasElement = document.getElementById("gLifeCanvas");
+    canvasContext = canvasElement.getContext("2d");
+
+    width  = canvasElement.width;
+    height = canvasElement.height;
+
+    canvasContext.lineWidth = 0.2;
+
+    var numCellsX = parseInt(width  / CELL_SIZE) + 1;
+    var numCellsY = parseInt(height / CELL_SIZE) + 1;
+
+    for(var i=0; i<numCellsX; i++) {
         currFrame[i] = new Array();
         prevFrame[i] = new Array();
-        for(var j=0; j<NUM_CELLS_Y; j++) {
+        for(var j=0; j<numCellsY; j++) {
             var randNumber = Math.random() * 200;
             currFrame[i][j] = (randNumber > 100);
             prevFrame[i][j] = false;
@@ -43,67 +41,54 @@ function init() {
 
     copyFrame();
 
-    var canvasElement = document.getElementById("gLifeCanvas");
-    canvasContext = canvasElement.getContext("2d");
-
-    xSize = WIDTH / NUM_CELLS_X;
-    ySize = HEIGHT / NUM_CELLS_Y;
-
-    //drawFrame();
     animateFrame();
 }
 
-function getRandomNumber() {
-    var num = Math.random() * 200;
-    return parseInt(num);
-}
-
-function genRandomColor() {
-    var clr = "RGB(";
-    clr += getRandomNumber() + ","; //red
-    clr += getRandomNumber() + ","; //green
-    clr += getRandomNumber() + ")"; //blue
-
-    return clr;
+function copyFrame() {
+    for(var i=0; i<currFrame.length; i++) {
+        for(var j=0; j<currFrame[i].length; j++) {
+            prevFrame[i][j] = currFrame[i][j];
+        }
+    }
 }
 
 function drawFrame() {
     var x = 0;
     var y = 0;
     canvasContext.strokeStyle = BORDER_COLOR;
-    for(var i=0; i<NUM_CELLS_X; i++) {
-        for(var j=0; j<NUM_CELLS_Y; j++) {
+    for(var i=0; i<currFrame.length; i++) {
+        for(var j=0; j<currFrame[i].length; j++) {
             if( currFrame[i][j] ) {
-                //canvasContext.fillStyle = LIVE_CELL_COLOR;
-                canvasContext.fillStyle = genRandomColor();
+                canvasContext.fillStyle = LIVE_CELL_COLOR;
             }
             else {
                 canvasContext.fillStyle = DEAD_CELL_COLOR;
             }
-            canvasContext.fillRect(x, y, xSize, ySize);
             canvasContext.beginPath();
-            canvasContext.rect(x, y, xSize, ySize);
+            canvasContext.rect(x, y, CELL_SIZE, CELL_SIZE);
+            //canvasContext.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+            canvasContext.fill();
             canvasContext.stroke();
-            y += ySize;
+            y += CELL_SIZE;
         }
-        x += xSize;
+        x += CELL_SIZE;
         y = 0;
     }
 }
 
 function animateFrame() {
 
-    for(var i=0; i<NUM_CELLS_X; i++) {
-        for(var j=0; j<NUM_CELLS_Y; j++) {
+    for(var i=0; i<currFrame.length; i++) {
+        for(var j=0; j<currFrame[i].length; j++) {
             var countAlive = 0;
             for(index in NEIGHBOUR_OFFSETS) {
                 var arr = NEIGHBOUR_OFFSETS[index];
                 var ii = i + arr[0];
                 ii = ii < 0 ? 0 : ii;
-                ii = ii > NUM_CELLS_X-1 ? NUM_CELLS_X-1 : ii;
+                ii = ii > currFrame.length-1 ? currFrame.length-1 : ii;
                 var jj = j + arr[1];
                 jj = jj < 0 ? 0 : jj;
-                jj = jj > NUM_CELLS_Y-1 ? NUM_CELLS_Y-1 : jj;
+                jj = jj > currFrame[i].length-1 ? currFrame[i].length-1 : jj;
                 if( prevFrame[ii][jj] ) {
                     countAlive++;
                 }
@@ -134,6 +119,6 @@ function animateFrame() {
     drawFrame();
     copyFrame();
 
-    setTimeout(animateFrame, 100);
+    requestAnimationFrame(animateFrame);
 }
 

@@ -5,13 +5,13 @@ var ctx;
 var minVelocity = -3;
 var maxVelocity = 3;
 var allBoids = new Array();
-var boidSize = 12;
+var boidSize = 20;
 
 var boidCount = 300;
 
 var alignmentDistance  = 100;     //Adjustable
-var cohesionDistance   = 150;      //Adjustable
-var separationDistance = 15;     //Adjustable
+var cohesionDistance   = 70;     //Adjustable
+var separationDistance = 25;     //Adjustable
 
 var initCtr = 0;
 var initR, initG, initB, clr;
@@ -54,10 +54,10 @@ function initBoids() {
 
         rX = randomBetween(10, width-10);
         rY = randomBetween(10, height-10);
-        iX = randomBetween(-1, 1);
-        iY = randomBetween(-1, 1);
     }
 
+    iX = randomBetween(-1, 1);
+    iY = randomBetween(-1, 1);
     var aBoid = new Boid(rX, rY, iX, iY, clr);
     allBoids.push( aBoid );
 

@@ -34,18 +34,26 @@ class Boid {
     update() {
         this.x += this.speedX;
         if( this.x > width+boidSize ) {
-            this.x = -1;
+            let ang = getAngle(this.x, this.y, width/2, height/2);
+            this.speedX -= Math.cos(ang);
+            this.speedY -= Math.sin(ang);
         }
         if( this.x < 0-boidSize ) {
-            this.x = width+1;
+            let ang = getAngle(this.x, this.y, width/2, height/2);
+            this.speedX -= Math.cos(ang);
+            this.speedY -= Math.sin(ang);
         }
 
         this.y += this.speedY;
         if( this.y > height+boidSize ) {
-            this.y = -1;
+            let ang = getAngle(this.x, this.y, width/2, height/2);
+            this.speedX -= Math.cos(ang);
+            this.speedY -= Math.sin(ang);
         }
         if( this.y < 0-boidSize ) {
-            this.y = height+1;
+            let ang = getAngle(this.x, this.y, width/2, height/2);
+            this.speedX -= Math.cos(ang);
+            this.speedY -= Math.sin(ang);
         }
     }
 
