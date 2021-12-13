@@ -47,7 +47,32 @@ window.addEventListener("load", (event) => {
     //Initialize the Edges
     for(let i=0; i<vertices.length; i++) {
         for(let j=0; j<vertices[i].length; j++) {
-            
+            let vert = vertices[i][j];
+            let rightVert = undefined;
+            if( i+1 < vertices.length ) {
+                rightVert = vertices[i+1][j];
+            }
+            let bottomVert = undefined;
+            if( j+1 < vertices[i].length ) {
+                bottomVert = vertices[i][j+1];
+            }
+
+            let x1 = vert.x;
+            let y1 = vert.y;
+ 
+            if( rightVert !== undefined ) {
+                let x2 = rightVert.x;
+                let y2 = rightVert.y;
+                let edge1 = new Edge(x1, y1, x2, y2);
+                edges.push(edge1);
+            }
+ 
+            if( bottomVert !== undefined ) {
+                x2 = bottomVert.x;
+                y2 = bottomVert.y;
+                let edge2 = new Edge(x1, y1, x2, y2);
+                edges.push(edge2);
+            }
         }
     }
 
@@ -92,6 +117,12 @@ function render() {
             let aVertex = vertices[i][j];
             aVertex.render(ctx);
         }
+    }
+
+    ctx.fillStyle = "#AA5555";
+    for(let i=0; i<edges.length; i++) {
+        let anEdge = edges[i];
+        anEdge.render(ctx);
     }
 }
 

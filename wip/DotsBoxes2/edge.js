@@ -28,6 +28,7 @@
         this.y2 = y2 + xt;
         this.w = this.x2-this.x1;
         this.h = this.y2-this.y1;
+        console.log(xt, yt, this.x1, this.y1, this.x2, this.y2, this.w, this.h);
     }
 
     /**
