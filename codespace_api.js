@@ -101,11 +101,28 @@ class Point {
  * Class Rectangle. Represents a rectangle having X, Y and width and height.
  */
 class Rectangle {
-    constructor(xx, yy, ww, hh) {
-        this.x = xx;
-        this.y = yy;
-        this.w = ww;
-        this.h = hh;
+    constructor(x, y, w, h) {
+        this.x1 = x;
+        this.y1 = y;
+        this.w  = w;
+        this.h  = h;
+        this.x2 = this.x1 + this.w;
+        this.y2 = this.y1 + this.h;
+    }
+
+    /**
+     * Returns true, if a point (x,y) is within the bounds of the rectangle.
+     * The borders are NOT counted as being within the rectangle.
+     * 
+     * @param {*} x 
+     * @param {*} y 
+     * @returns 
+     */
+    contains(x, y) {
+        if( x > this.x1 && x < this.x2 && y > this.y1 && y < this.y2 ) {
+            return true;
+        }
+        return false;
     }
 }
 
@@ -129,10 +146,10 @@ function map(inputNum, minInput, maxInput, minOutput, maxOutput) {
  * @param {*} canvasObject 
  */
 function getRealMousePosition(mouseEvent, canvasObject) {
-    var top = 0;
-    var left = 0;
+    let top = 0;
+    let left = 0;
 
-    var obj = canvasObject;
+    let obj = canvasObject;
     do
     {
         top += obj.offsetTop;
@@ -224,14 +241,14 @@ function hue2rgb(p, q, t) {
  * @return  {Array}           The RGB representation
  */
 function HSLtoRGB(h, s, l) {
-    var r, g, b;
+    let r, g, b;
 
     if(s == 0) {
         r = g = b = l; // achromatic
     }
     else {
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        var p = 2 * l - q;
+        let q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        let p = 2 * l - q;
         r = hue2rgb(p, q, h + 1/3);
         g = hue2rgb(p, q, h);
         b = hue2rgb(p, q, h - 1/3);
@@ -249,7 +266,7 @@ function HSLtoRGB(h, s, l) {
  * @param {*} num 
  */
 function toHex(num) {
-    var hex = num.toString(16);
+    let hex = num.toString(16);
     if( hex.length < 2 ) {
         hex = "0" + hex;
     }
@@ -267,14 +284,14 @@ function toHex(num) {
  * width
  */
 function resizeCanvas(aCanvasElement, fitToWidth) {
-    var w = aCanvasElement.width;
-    var h = aCanvasElement.height;
-    var screenWidth = document.body.clientWidth;
+    let w = aCanvasElement.width;
+    let h = aCanvasElement.height;
+    let screenWidth = document.body.clientWidth;
     if( screenWidth < w || fitToWidth === true ) {
-        var ratio = w / h;
+        let ratio = w / h;
 
-        var newWidth  = (screenWidth * 95)/100;
-        var newHeight = screenWidth / ratio;
+        let newWidth  = (screenWidth * 95)/100;
+        let newHeight = screenWidth / ratio;
         aCanvasElement.width = newWidth;
         aCanvasElement.height = newHeight;
     }
