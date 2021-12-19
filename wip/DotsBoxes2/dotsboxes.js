@@ -82,15 +82,43 @@ window.addEventListener("load", (event) => {
 
     updateStatus("Playing", currentPlayer, "");
 
+    //Add Events
+    theCanvas.addEventListener("mousemove", function(event) {
+        let mLoc = getRealMousePosition(event, theCanvas);
+        let mX = mLoc.x;
+        let mY = mLoc.y;
+        for(let i=0; i<edges.length; i++) {
+            edges[i].highlight = false;
+            if( edges[i].contains(mX, mY) ) {
+                edges[i].highlight = true;
+            }
+        }
+        render();
+    });
+
+    theCanvas.addEventListener("click", function(event) {
+        let mLoc = getRealMousePosition(event, theCanvas);
+        let mX = mLoc.x;
+        let mY = mLoc.y;
+        for(let i=0; i<edges.length; i++) {
+            edges[i].highlight = false;
+            if( edges[i].contains(mX, mY) ) {
+                edges[i].checked = true;
+            }
+        }
+        render();
+    });
+
     render();
+
+    test();
 });
 
 function resetBoard() {
     currentPlayer = HUMAN_PLAYER;
-    for(let i=0; i<boxes.length; i++) {
-        for(let j=0; j<boxes[i].length; j++) {
-            boxes[i][j].reset();
-        }
+
+    for(let i=0; i<edges.length; i++) {
+        edges[i].reset();
     }
 
     updateStatus("Playing", currentPlayer, "");
@@ -111,6 +139,11 @@ function render() {
     ctx.rect(0, 0, width, height);
     ctx.fill();
  
+    for(let i=0; i<edges.length; i++) {
+        let anEdge = edges[i];
+        anEdge.render(ctx);
+    }
+
     ctx.fillStyle = "#550000";
     for(let i=0; i<vertices.length; i++) {
         for(let j=0; j<vertices[i].length; j++) {
@@ -118,12 +151,18 @@ function render() {
             aVertex.render(ctx);
         }
     }
+}
 
-    ctx.fillStyle = "#AA5555";
-    for(let i=0; i<edges.length; i++) {
-        let anEdge = edges[i];
-        anEdge.render(ctx);
+var tempCtr = 0;
+function test() {
+    edges[tempCtr].highlight = true;
+    render();
+    tempCtr++;
+    if( tempCtr > edges.length-1 ) {
+        console.log("done");
+        return;
     }
+    setTimeout(test, 250);
 }
 
 function updateStatus(status, currPlayer, whoWon) {
