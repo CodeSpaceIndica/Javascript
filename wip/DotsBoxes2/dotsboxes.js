@@ -48,29 +48,22 @@ window.addEventListener("load", (event) => {
     for(let i=0; i<vertices.length; i++) {
         for(let j=0; j<vertices[i].length; j++) {
             let vert = vertices[i][j];
+
             let rightVert = undefined;
             if( i+1 < vertices.length ) {
                 rightVert = vertices[i+1][j];
             }
+            if( rightVert !== undefined ) {
+                let edge1 = new Edge(vert, rightVert);
+                edges.push(edge1);
+            }
+ 
             let bottomVert = undefined;
             if( j+1 < vertices[i].length ) {
                 bottomVert = vertices[i][j+1];
             }
-
-            let x1 = vert.x;
-            let y1 = vert.y;
- 
-            if( rightVert !== undefined ) {
-                let x2 = rightVert.x;
-                let y2 = rightVert.y;
-                let edge1 = new Edge(x1, y1, x2, y2);
-                edges.push(edge1);
-            }
- 
             if( bottomVert !== undefined ) {
-                x2 = bottomVert.x;
-                y2 = bottomVert.y;
-                let edge2 = new Edge(x1, y1, x2, y2);
+                let edge2 = new Edge(vert, bottomVert);
                 edges.push(edge2);
             }
         }
@@ -103,15 +96,16 @@ window.addEventListener("load", (event) => {
         for(let i=0; i<edges.length; i++) {
             edges[i].highlight = false;
             if( edges[i].contains(mX, mY) ) {
-                edges[i].checked = true;
+                edges[i].doChecked();
             }
         }
+        checkCompletion();
         render();
     });
 
     render();
 
-    test();
+    //test();
 });
 
 function resetBoard() {
@@ -131,6 +125,13 @@ function doComputerMove() {
     }
 
     updateStatus("Playing", currentPlayer, "");
+}
+
+function checkCompletion() {
+    for(let i=0; i<vertices.length; i++) {
+        for(let j=0; j<vertices[i].length; j++) {
+        }
+    }
 }
 
 function render() {

@@ -10,26 +10,23 @@ class Edge {
      * If it is vertical, we'll give t some thickness in the horizontal direction
      * likewise, if it is horizantal, we'll give t some thickness in the vertical direction
      * 
-     * @param {*} x1 
-     * @param {*} y1 
-     * @param {*} x2 
-     * @param {*} y2 
      */
-    constructor(x1, y1, x2, y2) {
-        this.x1 = x1 - 4;
-        this.y1 = y1 - 4;
-        this.x2 = x2 + 4;
-        this.y2 = y2 + 4;
+    constructor(vertex1, vertex2) {
+        this.vertex1 = vertex1;
+        this.vertex2 = vertex2;
 
-        this.w = this.x2-this.x1;
-        this.h = this.y2-this.y1;
+        this.x1 = vertex1.x - 4;
+        this.y1 = vertex1.y - 4;
+        this.x2 = vertex2.x + 4;
+        this.y2 = vertex2.y + 4;
+
+        this.w = this.x2 - this.x1;
+        this.h = this.y2 - this.y1;
         this.w = this.w == 0 ? 8 : this.w;
         this.h = this.h == 0 ? 8 : this.h;
 
         this.highlight = false;
         this.checked = false;
-
-        console.log(this.x1, this.y1, this.x2, this.y2);
     }
 
    /**
@@ -47,12 +44,33 @@ class Edge {
         return false;
     }
 
+    /**
+     * Set the value of checked to true, and also light up the 
+     * two connecting vertices.
+     */
+    doChecked() {
+        this.checked = true;
+        this.vertex1.lit = true;
+        this.vertex2.lit = true;
+    }
+
+    /**
+     * REset this edge
+     */
     reset() {
         this.highlight = false;
         this.checked = false;
+
+        this.vertex1.lit = false;
+        this.vertex2.lit = false;
     }
 
-   render(ctx) {
+    /**
+     * Render the edge on to a context
+     * 
+     * @param {*} ctx 
+     */
+    render(ctx) {
         ctx.fillStyle = "#EEEEEE";
         if( this.checked ) {
             ctx.fillStyle = "#0099FF";
