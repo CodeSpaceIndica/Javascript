@@ -28,7 +28,27 @@ window.addEventListener("load", (event) => {
     y = 0;
 
     plotBarnsleyFern();
+    pointCounter();
 });
+
+function pointCounter() {
+    let cCnt = ctr * 100;
+    ctx.fillStyle = "#000000";
+    ctx.beginPath();
+    ctx.rect(0, 0, 100, 20);
+    ctx.fill();
+    
+    ctx.fillStyle = "#FFFFFF";
+    ctx.beginPath();
+    ctx.fillText(cCnt, 2, 15);
+    ctx.fill();
+
+    if( ctx > MAX_POINTS ) {
+        return;
+    }
+
+    setTimeout(pointCounter, 250);
+}
 
 function plotBarnsleyFern() {
     for(let i=0; i<100; i++) {
@@ -58,7 +78,7 @@ function plotBarnsleyFern() {
         let h = map(y, 0, 9.9983, 0, 360);
         ctx.fillStyle = "hsl(" + h + ",100%, 50%)";
         ctx.beginPath();
-        ctx.rect(pX, pY, 2, 2);
+        ctx.rect(pX, pY, 1, 1);
         ctx.fill();
 
         x = nextX;
