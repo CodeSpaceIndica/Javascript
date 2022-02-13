@@ -1,0 +1,99 @@
+
+.container {
+    margin: auto;
+    width: 70%;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.puzzle {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2vh;
+}
+
+.cell {
+    width: 50px;
+    height:50px;
+    border: 1px dashed #404040;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 1vh;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bolder;
+    font-size: 3vw;
+}
+
+.message {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 3vh;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.regularMsg {
+    color: #333333;
+}
+
+.errorMsg {
+    color: #E10000;
+}
+
+.successMsg {
+    color: #007700;
+}
+
+.keyboard {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.row {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 1vh;
+}
+
+.keychar {
+    width: 3vw;
+    border: 1px solid #909090;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 5px;
+    margin: 3px;
+    background-color: #FFFFFF;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2.5vw;
+}
+
+.keychar:hover {
+    background-color: orange;
+}
+
+.notpresent {
+    background-color: #404040;
+    color: #FFFFFF;
+}
+
+.rightplace {
+    background-color: #A0F7B6;
+    color: #000000;
+}
+
+/** Letter present but at wrong place **/
+.rightletter {
+    background-color: #F2F261;
+    color: #000000;
+}

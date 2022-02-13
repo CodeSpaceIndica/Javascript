@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="wordle.css"/>
+        <script lang="javascript" src="../codespace_api.js"></script>
+        <script lang="javascript" src="wordle.js"></script>
+        <script lang="javascript" src="wordleRender.js"></script>
+        <script lang="javascript" src="wordlePuzzle.js"></script>
+        <title>Wordle Clone - The Big Int</title>
+    </head>
+    <body>
+        <div id="container" class="container">
+            <div id="puzzle" class="puzzle">
+            </div>
+
+            <div id="message" class="message">
+                &nbsp;
+            </div>
+
+            <div id="keyboard" class="keyboard">
+                <div id="keyboardRow1" class="row"></div>
+                <div id="keyboardRow2" class="row"></div>
+                <div id="keyboardRow3" class="row"></div>
+                <div id="keyboardRow4" class="row">
+                    <div id="char_crss" data-charid="crss" class="keychar">&#215;</div>
+                    <div id="char_bcks" data-charid="bcks" class="keychar">&#8592;</div>
+                    <div id="char_entr" data-charid="entr" class="keychar">&ldca;</div>
+                    <div id="char_rstt" data-charid="rstt" class="keychar">&orarr;</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
