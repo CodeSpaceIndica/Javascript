@@ -22,10 +22,45 @@ function initFiveLetterArray() {
     fiveLetterArray = allFiveLetterWords.split(",");
 }
 
+/**
+ * Picks a random word out of the five letter array.
+ * When picking a random word, it ensures it doesn't 
+ * pick up words that have duplicate letters in them.
+ * It will also NOT pick words that are plurals.
+ */
 function pickRandomWord() {
-    let randomIndex = parseInt( randomBetween(0, fiveLetterArray.length-1) );
+    do {
+        let randomIndex = parseInt( randomBetween(0, fiveLetterArray.length-1) );
+        puzzleWord = fiveLetterArray[randomIndex];
+    } while( wordHasDuplicateLetters(puzzleWord) || wordIsPlural(puzzleWord) );
+    puzzleWord = btoa(puzzleWord);
+}
 
-    puzzleWord = fiveLetterArray[randomIndex];
+/**
+ * Checks if the parameter word has duplicate words.
+ * 
+ * @param {*} aWord 
+ */
+function wordHasDuplicateLetters(aWord) {
+    var wArr = aWord.split("").sort();
+    for(let i=1; i<wArr.length; i++) {
+        if( wArr[i] == wArr[i-1] ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Checks if the parameter word has duplicate words.
+ * 
+ * @param {*} aWord 
+ */
+function wordIsPlural(aWord) {
+    if( aWord.endsWith("S") ) {
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -79,6 +114,8 @@ function addVirtualKeyEvents() {
                     resetPuzzlePieces();
                     renderPuzzle();
                     setMessage("&nbsp;", 1);
+                    document.getElementById("char_shrr").classList.add("disabled");
+                    document.getElementById("char_rstt").classList.add("disabled");
                 }
             }
 
@@ -111,22 +148,43 @@ function addKeyboardEvents() {
             return;
         }
 
+        //Escape Key
         if( event.keyCode == 27 ) {
+            depressKey("crss");
             eraseCurrRow();
+            event.stopPropagation();
+            event.preventDefault();
         }
+        //Enter Key
         else if( event.keyCode == 13 ) {
+            depressKey("entr");
             rowComplete();
+            event.stopPropagation();
+            event.preventDefault();
         }
+        //Backspace Key
         else if( event.keyCode == 8 ) {
+            depressKey("bcks");
             eraseLastChar();
+            event.stopPropagation();
+            event.preventDefault();
         }
-        else if ( (event.keyCode >= 64 && event.keyCode <= 90) 
-                    || (event.keyCode >= 48 && event.keyCode <= 57) ) {
+        //All keys from A to Z
+        else if ( event.keyCode >= 65 && event.keyCode <= 90 ) {
             let chr = String.fromCharCode(event.keyCode);
+            depressKey(chr);
             //Add this character to keyboard
             addCharacter(chr);
         }
     });
+}
+
+function depressKey(aChar) {
+    let keyDiv = document.getElementById("char_" + aChar);
+    keyDiv.classList.add("keydown");
+    setTimeout(function() {
+        keyDiv.classList.remove("keydown");
+    }, 50);
 }
 
 window.addEventListener("load", (event) => {
