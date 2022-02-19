@@ -1,0 +1,112 @@
+
+.container {
+    margin: auto;
+    width: 70%;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.puzzle {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2vh;
+}
+
+.cell {
+    width: 50px;
+    height:50px;
+    border: 1px dashed #404040;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 0.75vh;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bolder;
+    font-size: 3vw;
+}
+
+.message {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 2vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+}
+
+.regularMsg {
+    color: #333333;
+}
+
+.errorMsg {
+    color: #E10000;
+}
+
+.successMsg {
+    color: #007700;
+}
+
+.keyboard {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.row {
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 0.75vh;
+}
+
+.keychar {
+    width: 3vw;
+    border: 1px solid #909090;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 5px;
+    margin: 0.2vh 0.3vw 0.2vw 0.3vw;
+    background-color: #FFFFFF;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 2.2vw;
+    font-weight: bolder;
+}
+
+.keychar:hover {
+    background-color: orange;
+}
+
+.disabled {
+    color: #E1E1E1;
+}
+
+.keydown {
+    background-color: #909090;
+}
+
+.notpresent {
+    background-color: #404040;
+    color: #FFFFFF;
+    transition: all 200ms;
+}
+
+.rightplace {
+    background-color: #A0F7B6;
+    color: #000000;
+    transition: all 200ms;
+}
+
+/** Letter present but at wrong place **/
+.rightletter {
+    background-color: #f2d761;
+    color: #000000;
+    transition: all 200ms;
+}
