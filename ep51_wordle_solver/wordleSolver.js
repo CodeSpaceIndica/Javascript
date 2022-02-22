@@ -15,6 +15,10 @@ function solve() {
     //Create a copy of the original fiveLetterArray
     //This is an ES6 clone. DOES NOT WORK FOR MULTIDIMENSIONAL ARRAYS
     arrayOfWords = [...fiveLetterArray];
+    //Remove words with duplicate letters
+    arrayOfWords = arrayOfWords.filter(aWord => !wordHasDuplicateLetters(aWord) );
+    //Remove plurals
+    arrayOfWords = arrayOfWords.filter(aWord => !wordIsPlural(aWord) );
     currentRowToTry = 0;
 
     //Call the next step.
@@ -29,7 +33,7 @@ function solveStep() {
     }
 
     console.log("Words Remaining :" + arrayOfWords.length);
-    
+
     //1. Pick a random word from the list of words
     let solutionWord = pickRandomSolution();
     console.log(solutionWord);
@@ -86,13 +90,8 @@ function solveStep() {
  * @returns 
  */
 function pickRandomSolution() {
-    let solutionWord = "";
-    do {
-        let randomIndex = parseInt(randomBetween(0, arrayOfWords.length-1) );
-        solutionWord = arrayOfWords[ randomIndex ];
-    } while( wordHasDuplicateLetters(solutionWord) ||
-                wordIsPlural(solutionWord) );
-
+    let randomIndex = parseInt(randomBetween(0, arrayOfWords.length-1) );
+    let solutionWord = arrayOfWords[ randomIndex ];
     return solutionWord;
 }
 
@@ -125,7 +124,8 @@ function keepOnlyPresentLetters() {
         //those words that have the letter.
         if( puzzleCell.classList.contains("rightletter") ) {
             let filterChar = puzzleCell.innerHTML;
-            arrayOfWords = arrayOfWords.filter( aWord => aWord.includes(filterChar) );
+            filterChar = filterChar.charAt(0);
+            arrayOfWords = arrayOfWords.filter( aWord => aWord.includes(filterChar) && aWord.charAt(col) !== filterChar );
         }
     }
 }
