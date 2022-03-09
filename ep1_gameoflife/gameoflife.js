@@ -1,7 +1,7 @@
-const CELL_SIZE = 7;
+const CELL_SIZE = 8;
 
-const DEAD_CELL_COLOR = "#292826";
-const LIVE_CELL_COLOR = "#f9d342";
+const DEAD_CELL_COLOR = "#222222";
+const LIVE_CELL_COLOR = "#F2F261";
 const BORDER_COLOR    = "#000000";
 
 const NEIGHBOUR_OFFSETS = [
@@ -25,6 +25,7 @@ function init() {
     height = canvasElement.height;
 
     canvasContext.lineWidth = 0.2;
+    canvasContext.strokeStyle = BORDER_COLOR;
 
     var numCellsX = parseInt(width  / CELL_SIZE) + 1;
     var numCellsY = parseInt(height / CELL_SIZE) + 1;
@@ -39,23 +40,17 @@ function init() {
         }
     }
 
-    copyFrame();
+    for(var i=0; i<currFrame.length; i++) {
+        //Array Copy 
+        prevFrame[i] = currFrame[i].slice();
+    }
 
     animateFrame();
-}
-
-function copyFrame() {
-    for(var i=0; i<currFrame.length; i++) {
-        for(var j=0; j<currFrame[i].length; j++) {
-            prevFrame[i][j] = currFrame[i][j];
-        }
-    }
 }
 
 function drawFrame() {
     var x = 0;
     var y = 0;
-    canvasContext.strokeStyle = BORDER_COLOR;
     for(var i=0; i<currFrame.length; i++) {
         for(var j=0; j<currFrame[i].length; j++) {
             if( currFrame[i][j] ) {
@@ -66,13 +61,15 @@ function drawFrame() {
             }
             canvasContext.beginPath();
             canvasContext.rect(x, y, CELL_SIZE, CELL_SIZE);
-            //canvasContext.fillRect(x, y, CELL_SIZE, CELL_SIZE);
             canvasContext.fill();
             canvasContext.stroke();
             y += CELL_SIZE;
         }
         x += CELL_SIZE;
         y = 0;
+
+        //Copy the current frame over to the previous frame
+        prevFrame[i] = currFrame[i].slice();
     }
 }
 
@@ -117,7 +114,6 @@ function animateFrame() {
     }
 
     drawFrame();
-    copyFrame();
 
     requestAnimationFrame(animateFrame);
 }
