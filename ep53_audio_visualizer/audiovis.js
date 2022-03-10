@@ -8,6 +8,8 @@ var analyser;
 var hue = 0;
 var hueAdd = 0.5;
 
+var posY = 0;
+
 window.addEventListener("load", (event) => {
     let theCanvas = document.getElementById("aCanvas");
     resizeCanvas(theCanvas, false);
@@ -22,10 +24,10 @@ window.addEventListener("load", (event) => {
 
 function startVis() {
     // shape style
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
     ctx.fillRect(0, 0, width, height);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'steelblue';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'orange';
 
     // request frame
     let audioElement = document.getElementById("audioSource");
@@ -38,7 +40,7 @@ function startVis() {
     // create audio analyser
     analyser = audioCtx.createAnalyser();      
     // set audio analyser      
-    analyser.fftSize = 2048;
+    analyser.fftSize = 256;
     let bufferLength = analyser.frequencyBinCount;
     dataArray = new Uint8Array(bufferLength);
     // Bind our analyser to the media element source.
@@ -52,18 +54,19 @@ function startVis() {
     audioVisualize();
 }
 
+//Line Graph Visualization
 // function audioVisualize() {
 //     analyser.getByteTimeDomainData(dataArray);
 
 //     // clear the previous shape
 //     ctx.fillRect(0, 0, width, height);
 //     ctx.beginPath();
-//     let sliceWidth = width * (1.0 / bufferLength);
+//     let sliceWidth = width * (1.0 / dataArray.length);
 //     let x = 0;
 //     let v = dataArray[0] / 128.0;
 //     let y = v * height / 2;
 //     ctx.moveTo(x, y);
-//     for(let i = 1; i < bufferLength; i++) {
+//     for(let i = 1; i < dataArray.length; i++) {
 //         v = dataArray[i] / 128.0;
 //         y = v * height / 2;
 //         ctx.lineTo(x, y);
@@ -75,39 +78,106 @@ function startVis() {
 //     requestAnimationFrame(audioVisualize);
 // }
 
+//Circle Visualization
+// function audioVisualize() {
+//     analyser.getByteTimeDomainData(dataArray);
+
+//     // clear the previous shape
+//     ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+//     ctx.beginPath();
+//     ctx.rect(0, 0, width, height);
+//     ctx.fill();
+
+//     let r = 200;
+//     let cX = width/2;
+//     let cY = height/2;
+
+//     let radianAdd = Constants.TWO_PI * (1.0 / dataArray.length);
+//     let rad = 0;
+//     ctx.fillStyle = "hsl(" + hue + ", 100%, 50%)";
+//     for(let i=0; i<dataArray.length; i++) {
+//         // v = dataArray[i] / 128.0;
+//         // v = v * r;
+//         v = dataArray[i];
+
+//         let x = v * Math.cos(rad) + cX;
+//         let y = v * Math.sin(rad) + cY;
+
+//         ctx.beginPath();
+//         ctx.arc(x, y, 2, 0, Constants.TWO_PI, false);
+//         ctx.fill();
+
+//         rad += radianAdd;
+//     }
+//     hue += hueAdd;
+//     if( hue > 360 ) {
+//         hue = 0;
+//     }
+
+//     requestAnimationFrame(audioVisualize);
+// }
+
+//Line Visualization but line fading away into distance
+//Didnt work
+// function audioVisualize() {
+//     analyser.getByteTimeDomainData(dataArray);
+
+//     // clear the previous shape
+//     ctx.beginPath();
+//     ctx.rect(0, 0, width, height);
+//     ctx.fill();
+
+//     ctx.beginPath();
+//     let sliceWidth = width * (1.0 / dataArray.length);
+//     let x = 0;
+//     let v = dataArray[0] / 128.0;
+//     let y = v * height / 1.2;
+//     ctx.moveTo(x, y);
+//     for(let i = 1; i < dataArray.length; i++) {
+//         v = dataArray[i] / 128;
+//         y = v * height / 1.2;
+
+//         ctx.lineTo(x, y);
+
+//         x += sliceWidth;
+//     }
+//     ctx.lineTo(width, height / 1.2);
+//     ctx.stroke();
+
+//     requestAnimationFrame(audioVisualize);
+// }
+
+//Circle Spikes Visualization
 function audioVisualize() {
     analyser.getByteTimeDomainData(dataArray);
 
     // clear the previous shape
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    //ctx.fillStyle = "rgba(0, 0, 0, 1)";
     ctx.beginPath();
     ctx.rect(0, 0, width, height);
     ctx.fill();
 
-    let r = 200;
+    let r = 127;
     let cX = width/2;
     let cY = height/2;
 
     let radianAdd = Constants.TWO_PI * (1.0 / dataArray.length);
     let rad = 0;
-    ctx.fillStyle = "hsl(" + hue + ", 100%, 50%)";
     for(let i=0; i<dataArray.length; i++) {
-        // v = dataArray[i] / 128.0;
-        // v = v * r;
-        v = dataArray[i] * 2;
+        v = dataArray[i];
 
-        let x = v * Math.cos(rad) + cX;
-        let y = v * Math.sin(rad) + cY;
+        let x = r * Math.cos(rad) + cX;
+        let y = r * Math.sin(rad) + cY;
 
         ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Constants.TWO_PI, false);
-        ctx.fill();
+        ctx.moveTo(x, y);
+        x = v * Math.cos(rad) + cX;
+        y = v * Math.sin(rad) + cY;
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
 
         rad += radianAdd;
-    }
-    hue += hueAdd;
-    if( hue > 360 ) {
-        hue = 0;
     }
 
     requestAnimationFrame(audioVisualize);
