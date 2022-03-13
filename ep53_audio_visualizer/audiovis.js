@@ -8,8 +8,6 @@ var analyser;
 var hue = 0;
 var hueAdd = 0.5;
 
-var posY = 0;
-
 window.addEventListener("load", (event) => {
     let theCanvas = document.getElementById("aCanvas");
     resizeCanvas(theCanvas, false);
@@ -157,27 +155,28 @@ function audioVisualize() {
     ctx.rect(0, 0, width, height);
     ctx.fill();
 
-    let r = 127;
+    let radius = 127;
     let cX = width/2;
     let cY = height/2;
 
     let radianAdd = Constants.TWO_PI * (1.0 / dataArray.length);
-    let rad = 0;
+    let radian = 0;
     for(let i=0; i<dataArray.length; i++) {
-        v = dataArray[i];
-
-        let x = r * Math.cos(rad) + cX;
-        let y = r * Math.sin(rad) + cY;
-
+        let x = radius * Math.cos(radian) + cX;
+        let y = radius * Math.sin(radian) + cY;
         ctx.beginPath();
         ctx.moveTo(x, y);
-        x = v * Math.cos(rad) + cX;
-        y = v * Math.sin(rad) + cY;
 
+        v = dataArray[i];
+        if( v < radius ) {
+            v = radius;
+        }
+        x = v * Math.cos(radian) + cX;
+        y = v * Math.sin(radian) + cY;
         ctx.lineTo(x, y);
         ctx.stroke();
 
-        rad += radianAdd;
+        radian += radianAdd;
     }
 
     requestAnimationFrame(audioVisualize);
