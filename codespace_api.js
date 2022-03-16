@@ -314,6 +314,26 @@ function getAngle(x1, y1, x2, y2) {
 }
 
 /**
+ * Returns the highest power of 2 number for a given parameter.
+ * This function exploits a bit operators trick to find if a number
+ * is a power of 2.
+ * For example
+ * 32 & 31 is 0, thus 32 is a power f 2
+ * 31 & 30 returns 30 and thus 31 is not a power of two.
+ * 
+ * @param {*} number 
+ * @returns 
+ */
+function getHighestPowerOfTwo(number) {
+    for(let i=number; i>=1; i--) {
+        if( (i & (i-1) ) == 0 ) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+/**
  * A constants class to be used through
  * out our development.
  */
