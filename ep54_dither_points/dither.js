@@ -42,7 +42,7 @@ window.addEventListener("load", (event) => {
 
 function loadImage() {
     anImage = new Image();
-    anImage.src = "thebigintlogo.png";
+    anImage.src = "thebigintlogo_s.png";
     anImage.onload = function() {
         let imgW = this.width;
         let imgH = this.height;
@@ -75,10 +75,10 @@ function loadImage() {
                     let x = i * factor;
                     let y = j * factor;
 
-                    let rndx = Math.random() * 4;
-                    let rndy = Math.random() * 4;
+                    let rndX = randomBetween(-1, 1);
+                    let rndY = randomBetween(-1, 1);
 
-                    let aPoint = new Point(x+rndx, y+rndy);
+                    let aPoint = new Point(x+rndX, y+rndY);
                     points.push( aPoint );
                     pointsAnchor.push( aPoint.clone() );
                 }
@@ -125,11 +125,11 @@ function dither() {
     ctx.fill();
 
     for(let i=0; i<dataArray.length; i++) {
-        let freq = dataArray[i] - 128;
+        let freq = (dataArray[i] - 128) / 2;
         let rIndex = parseInt( randomBetween(0, points.length-1) );
         let aPnt = points[rIndex];
-        aPnt.x += freq/4;
-        aPnt.y += freq/2;
+        aPnt.x += randomBetween(-freq, freq);
+        aPnt.y += randomBetween(-freq, freq);
     }
 
     ctx.fillStyle = "#FFFFFF";
