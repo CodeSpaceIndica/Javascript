@@ -42,7 +42,7 @@ window.addEventListener("load", (event) => {
 
 function loadImage() {
     anImage = new Image();
-    anImage.src = "thebigintlogo_s.png";
+    anImage.src = "thebigintlogo.png";
     anImage.onload = function() {
         let imgW = this.width;
         let imgH = this.height;
