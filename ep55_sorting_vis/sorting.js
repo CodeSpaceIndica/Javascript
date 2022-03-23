@@ -63,7 +63,7 @@ function drawHueCircle() {
     ctx.fillText("Delay   " + timeDelay         , 5, 84);
 
     let radian = 0;
-    let radianAdd = (Math.PI*2) / valuesArray.length;
+    let radianAdd = Constants.TWO_PI / valuesArray.length;
     for(let i=0; i<valuesArray.length; i++) {
         let x = radius * Math.cos(radian) + cX;
         let y = radius * Math.sin(radian) + cY;
@@ -130,8 +130,11 @@ function getSorter(sorterName) {
     else if( sorterName == "count" ) {
         return new CountingSort();
     }
-    else if( sorterName == "radix" ) {
-        return new RadixSort();
+    else if( sorterName == "insertion" ) {
+        return new InsertionSort();
+    }
+    else if( sorterName == "bucket" ) {
+        return new BucketSort();
     }
 
     return undefined;

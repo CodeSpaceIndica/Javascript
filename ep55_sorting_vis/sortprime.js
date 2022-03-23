@@ -34,4 +34,14 @@ class SortPrime {
         }
         return max;
     }
+
+    getMinimum(anArray) {
+        let min = anArray[0];
+        for (let i=1; i<anArray.length; i++) {
+            if (anArray[i] < min) {
+                min = anArray[i];
+            }
+        }
+        return min;
+    }
 }
