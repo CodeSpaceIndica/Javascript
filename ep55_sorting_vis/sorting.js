@@ -11,7 +11,9 @@ var timeDelay = 25;
 //An array of angles having values from 0 to 2*Math.PI
 var valuesArray = new Array();
 
-var index = 0;
+var isMuted = false;
+
+var sorter;
 
 window.addEventListener("load", (event) => {
     let theCanvas = document.getElementById("aCanvas");
@@ -23,9 +25,12 @@ window.addEventListener("load", (event) => {
 
     ctx.lineWidth = 7;
     ctx.lineCap = "round";
+    ctx.font = "14px Monospace";
 
     document.getElementById("start").addEventListener("click", startSort);
     document.getElementById("shuffle").addEventListener("click", doShuffle);
+    document.getElementById("mute").addEventListener("click", soundControl);
+    document.getElementById("sorter").addEventListener("change", sorterChange);
 
     cX = width / 2;
     cY = height / 2;
@@ -37,7 +42,11 @@ window.addEventListener("load", (event) => {
         valuesArray.push(h);
     }
 
+    sorterChange();
+
     doShuffle();
+
+    drawHueCircle();
 });
 
 function drawHueCircle() {
@@ -45,6 +54,13 @@ function drawHueCircle() {
     ctx.beginPath();
     ctx.rect(0, 0, width, height);
     ctx.fill();
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText("Name    " + sorter.name()     , 5, 20);
+    ctx.fillText("Loops   " + sorter.loopCount  , 5, 36);
+    ctx.fillText("Swaps   " + sorter.swapCount  , 5, 52);
+    ctx.fillText("Elapsed " + sorter.timeElapsed, 5, 68);
+    ctx.fillText("Delay   " + timeDelay         , 5, 84);
 
     let radian = 0;
     let radianAdd = (Math.PI*2) / valuesArray.length;
@@ -59,6 +75,24 @@ function drawHueCircle() {
         ctx.stroke();
 
         radian += radianAdd;
+    }
+
+    if( sorter.isDone ) {    
+        document.getElementById("start").disabled = false;
+        document.getElementById("shuffle").disabled = false;
+        document.getElementById("sorter").disabled = false;
+    }
+
+    requestAnimationFrame(drawHueCircle);
+}
+
+function soundControl() {
+    isMuted = !isMuted;
+    if( isMuted ) {
+        document.getElementById("mute").innerText = "Un-Mute";
+    }
+    else {
+        document.getElementById("mute").innerText = "Mute";
     }
 }
 
@@ -81,43 +115,42 @@ function shuffle(anArray) {
     return anArray;
 }
 
+function sorterChange() {
+    let sorterName = document.getElementById("sorter").value;
+    sorter = getSorter(sorterName);
+}
+
+function getSorter(sorterName) {
+    if( sorterName == "bubble" ) {
+        return new BubbleSort();
+    }
+    else if( sorterName == "quick" ) {
+        return new QuickSort();
+    }
+    else if( sorterName == "count" ) {
+        return new CountingSort();
+    }
+    else if( sorterName == "radix" ) {
+        return new RadixSort();
+    }
+
+    return undefined;
+}
+
 function doShuffle() {
     valuesArray = shuffle(valuesArray);
+    sorter.initSort();
+}
 
-    drawHueCircle();
+async function sleep(timeMSeconds) {
+    return new Promise( resolve => setTimeout(resolve, timeMSeconds) );
 }
 
 function startSort() {
-    index = 0;
-    
     document.getElementById("start").disabled = true;
     document.getElementById("shuffle").disabled = true;
-    
-    doSort();
-}
+    document.getElementById("sorter").disabled = true;
 
-function doSort() {
-    //BUBBLE SORT
-    for (let j=0; j<valuesArray.length-index; j++) {
-        if (valuesArray[j] > valuesArray[j+1]) {
-            let tmp = valuesArray[j];
-            valuesArray[j] = valuesArray[j+1];
-            valuesArray[j+1] = tmp;
-        }
-    }
-    index++;
-    if( index > valuesArray.length-1 ) {
-        document.getElementById("start").disabled = false;
-        document.getElementById("shuffle").disabled = false;
-        return;
-    }
-
-
-    //Play note only when a swap happens.
-    let frequency = (valuesArray[index] * 10) + 500;
-    playNote(frequency, 10);
-
-    drawHueCircle();
-
-    setTimeout(doSort, timeDelay);
+    sorter.initSort();
+    sorter.doSort();
 }

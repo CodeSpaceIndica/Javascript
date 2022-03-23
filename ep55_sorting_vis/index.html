@@ -8,14 +8,28 @@
         </style>
         <script lang="javascript" src="../codespace_api.js"></script>
         <script lang="javascript" src="beeper.js"></script>
+        <script lang="javascript" src="sortprime.js"></script>
+        <script lang="javascript" src="bubblesort.js"></script>
+        <script lang="javascript" src="quicksort.js"></script>
+        <script lang="javascript" src="counting.js"></script>
+        <script lang="javascript" src="radixsort.js"></script>
         <script lang="javascript" src="sorting.js"></script>
         <title>Sorting Visualization</title>
     </head>
     <body>
         <div style="margin: auto; width: 800px; border: 1px solid black; text-align: center;">
+            <select id="sorter">
+                <option value="bubble">Bubble Sort</option>
+                <option value="quick">Quick Sort</option>
+                <option value="count">Counting Sort</option>
+                <option value="radix">Radix Sort</option>
+            </select>
+            <br/>
             <button id="start">Sort</button>
             &nbsp;
             <button id="shuffle">Shuffle</button>
+            &nbsp;
+            <button id="mute">Mute</button>
             <br/>
         </div>
 

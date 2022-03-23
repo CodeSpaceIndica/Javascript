@@ -11,7 +11,11 @@ async function playNote(frequency, duration) {
 
     oscillator.type = "sine";
     oscillator.frequency.value = frequency; // value in hertz
-    oscillator.connect(audioCtx.destination);
+    var gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0.05;
+    gainNode.connect(audioCtx.destination);
+    //oscillator.connect(audioCtx.destination);
+    oscillator.connect(gainNode);
     oscillator.start();
 
     setTimeout(
