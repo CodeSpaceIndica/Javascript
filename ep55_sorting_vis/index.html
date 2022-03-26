@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <style>
+            canvas {border: 1px solid #999999}
+            button { padding: 7px; border-radius: 5px; margin-top: 5px; margin-bottom: 5px;}
+        </style>
+        <script lang="javascript" src="../codespace_api.js"></script>
+        <script lang="javascript" src="beeper.js"></script>
+        <script lang="javascript" src="sortprime.js"></script>
+        <script lang="javascript" src="bubblesort.js"></script>
+        <script lang="javascript" src="quicksort.js"></script>
+        <script lang="javascript" src="countingsort.js"></script>
+        <script lang="javascript" src="insertionsort.js"></script>
+        <script lang="javascript" src="bucketsort.js"></script>
+        <script lang="javascript" src="sorting.js"></script>
+        <title>Sorting Visualization</title>
+    </head>
+    <body>
+        <div style="margin: auto; width: 800px; border: 1px solid black; text-align: center;">
+            <select id="sorter">
+                <option value="bubble">Bubble Sort</option>
+                <option value="quick">Quick Sort</option>
+                <option value="count">Counting Sort</option>
+                <option value="insertion">Insertion Sort</option>
+                <option value="bucket">Bucket Sort</option>
+            </select>
+            <br/>
+            <button id="start">Sort</button>
+            &nbsp;
+            <button id="shuffle">Shuffle</button>
+            &nbsp;
+            <button id="mute">Mute</button>
+            <br/>
+        </div>
+
+        <div style="margin: auto; width: 800px;">
+            <canvas id="aCanvas" width="800" height="800"></canvas>
+        </div>
+    </body>
+</html>
