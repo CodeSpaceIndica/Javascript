@@ -50,19 +50,14 @@ class Edge {
      */
     doChecked() {
         this.checked = true;
-        this.vertex1.lit = true;
-        this.vertex2.lit = true;
     }
 
     /**
-     * REset this edge
+     * Reset this edge
      */
     reset() {
         this.highlight = false;
         this.checked = false;
-
-        this.vertex1.lit = false;
-        this.vertex2.lit = false;
     }
 
     /**
