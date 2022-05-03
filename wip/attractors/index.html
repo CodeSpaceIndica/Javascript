@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <style>
+            canvas {border: 1px solid #999999}
+        </style>
+        <script lang="javascript" src="../codespace_api.js"></script>
+        <script lang="javascript" src="chaos.js"></script>
+        <script lang="javascript" src="lorentz.js"></script>
+        <script lang="javascript" src="thomas.js"></script>
+        <script lang="javascript" src="aizawa.js"></script>
+        <script lang="javascript" src="dadras.js"></script>
+        <script lang="javascript" src="chen.js"></script>
+        <script lang="javascript" src="lorentz83.js"></script>
+        <script lang="javascript" src="rossler.js"></script>
+        <script lang="javascript" src="halvorsen.js"></script>
+        <script lang="javascript" src="sprott.js"></script>
+        <script lang="javascript" src="attractors.js"></script>
+        <title>Attractors</title>
+    </head>
+    <body>
+        <div style="margin: auto; width: 800px; text-align: center;">
+            <select id="attractor">
+                <option value="sprott">Sprott Attractor</option>
+                <option value="halvorsen">Halvorsen Attractor</option>
+                <option value="rossler">Rossler Attractor</option>
+                <option value="lorentz83">Lorentz83 Attractor</option>
+                <option value="chen">Chen Attractor</option>
+                <option value="lorentz">Lorentz Attractor</option>
+                <option value="thomas">Thomas Attractor</option>
+                <option value="aizawa">Aizawa Attractor</option>
+                <option value="dadras">Dadras Attractor</option>
+            </select>
+        </div>
+
+        <div style="width: 800px; margin: auto;">
+            <canvas id="aCanvas" width="800" height="800"></canvas>
+        </div>
+    </body>
+</html>
