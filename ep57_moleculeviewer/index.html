@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <style>
+            canvas {border: 1px solid #999999; margin: auto}
+        </style>
+        <script lang="javascript" src="../codespace_api.js"></script>
+        <script lang="javascript" src="ThreeDPoint.js"></script>
+        <script lang="javascript" src="atom.js"></script>
+        <script lang="javascript" src="molecules.js"></script>
+        <script lang="javascript" src="moleculeviewer.js"></script>
+        <title>3D to 2D Projection</title>
+    </head>
+    <body>
+        <select id="molecule">
+            <option value="water">Water</option>
+            <option value="ethane">Ethane</option>
+            <option value="cyclohexane">Cyclohexane</option>
+            <option value="bmf">Buckminsterfullerine</option>
+            <option value="benzene">Benzene</option>
+            <option value="pyridine">Pyridine</option>
+            <option value="methane">Methane</option>
+            <option value="sulphuricacid">Sulphuric Acid</option>
+            <option value="glucose">Glucose</option>
+        </select>
+        <br/>
+        <canvas id="aCanvas" width="800" height="800"></canvas>
+    </body>
+</html>

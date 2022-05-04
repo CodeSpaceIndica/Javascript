@@ -334,6 +334,23 @@ function getHighestPowerOfTwo(number) {
 }
 
 /**
+ * Constrain a value in variable "aValue" to be 
+ * between a lowerLimit and upperLimit
+ * 
+ * @param {*} aValue 
+ * @param {*} lowerLimit 
+ * @param {*} upperLimit 
+ * @returns 
+ */
+function constrain(aValue, lowerLimit, upperLimit) {
+    let newValue = aValue;
+    newValue = newValue < lowerLimit ? lowerLimit : newValue;
+    newValue = newValue > upperLimit ? upperLimit : newValue;
+
+    return newValue;
+}
+
+/**
  * A constants class to be used through
  * out our development.
  */
