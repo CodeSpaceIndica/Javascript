@@ -13,6 +13,8 @@ var drag = false;
 var dragStartX, dragStartY;
 var mX, mY;
 
+var moleculeName, moleculeFormula;
+
 /**
  * Initialize the Canvas
  */
@@ -28,6 +30,7 @@ var mX, mY;
     xCenter = width/2;
     yCenter = height/2;
 
+    aCtx.font = "2em Monospace";
     aCtx.translate(xCenter, yCenter);
 
     canvasElement.addEventListener("mousedown", function(event) {
@@ -68,41 +71,46 @@ var mX, mY;
         drag = false;
     });
 
-    document.getElementById("molecule").addEventListener("change", setMolecule);
+    initializeDefinitions();
+});
+
+function initializeDefinitions() {
+    let selectDiv = document.getElementById("selectDiv");
+
+    let selectElem = document.createElement("select");
+    selectElem.id = "moleculeSelect";
+
+    definitions.molecules.forEach(molecule => {
+        let id = molecule.id;
+        let name = molecule.name;
+        let optionElem = document.createElement("option");
+        optionElem.value = id;
+        optionElem.innerText = name;
+
+        selectElem.appendChild(optionElem);
+    });
+
+    selectDiv.appendChild(selectElem);
+
+    document.getElementById("moleculeSelect").addEventListener("change", setMolecule);
 
     setMolecule();
-});
+}
 
 function setMolecule() {
     points = [];
-    let moleculeName = document.getElementById("molecule").value;
-    if( moleculeName == "water" ) {
-        points = parseMolecule(water);
-    }
-    else if( moleculeName == "ethane" ) {
-        points = parseMolecule(ethane);
-    }
-    else if( moleculeName == "cyclohexane" ) {
-        points = parseMolecule(cyclohexane);
-    }
-    else if( moleculeName == "bmf" ) {
-        points = parseMolecule(buckminsterfullerine);
-    }
-    else if( moleculeName == "benzene" ) {
-        points = parseMolecule(benzene);
-    }
-    else if( moleculeName == "pyridine" ) {
-        points = parseMolecule(pyridine);
-    }
-    else if( moleculeName == "methane" ) {
-        points = parseMolecule(methane);
-    }
-    else if( moleculeName == "sulphuricacid" ) {
-        points = parseMolecule(sulphuricacid);
-    }
-    else if( moleculeName == "glucose" ) {
-        points = parseMolecule(glucose);
-    }
+
+    let moleculeID = document.getElementById("moleculeSelect").value;
+    definitions.molecules.forEach(molecule => {
+        let id = molecule.id;
+        if( id == moleculeID ) {
+            moleculeName = molecule.name;
+            moleculeFormula = molecule.formula;
+            let xyz = molecule.xyz;
+            points = parseMolecule(xyz);
+        }
+    });
+
     projection();
 }
 
@@ -110,6 +118,10 @@ function projection() {
     aCtx.fillStyle = "#000000";
     aCtx.rect(-xCenter, -yCenter, width, height);
     aCtx.fill();
+
+    aCtx.fillStyle = "#F1F1F1";
+    aCtx.fillText(moleculeName, -xCenter+3, -yCenter+20);
+    aCtx.fillText(moleculeFormula, -xCenter+3, -yCenter+45);
 
     points.sort((point1, point2) => {
         return point1.projected - point2.projected;

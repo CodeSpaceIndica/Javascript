@@ -1,7 +1,8 @@
 <html>
     <head>
         <style>
-            canvas {border: 1px solid #999999; margin: auto}
+            div {margin-bottom: 1vh; width: 800; text-align: center;}
+            canvas {border: 1px solid #999999;}
         </style>
         <script lang="javascript" src="../codespace_api.js"></script>
         <script lang="javascript" src="ThreeDPoint.js"></script>
@@ -11,18 +12,7 @@
         <title>3D to 2D Projection</title>
     </head>
     <body>
-        <select id="molecule">
-            <option value="water">Water</option>
-            <option value="ethane">Ethane</option>
-            <option value="cyclohexane">Cyclohexane</option>
-            <option value="bmf">Buckminsterfullerine</option>
-            <option value="benzene">Benzene</option>
-            <option value="pyridine">Pyridine</option>
-            <option value="methane">Methane</option>
-            <option value="sulphuricacid">Sulphuric Acid</option>
-            <option value="glucose">Glucose</option>
-        </select>
-        <br/>
+        <div id="selectDiv"></div>
         <canvas id="aCanvas" width="800" height="800"></canvas>
     </body>
 </html>
