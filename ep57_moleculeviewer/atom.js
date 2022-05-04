@@ -80,9 +80,9 @@ function convertAtomTo3DPoint(type, x, y, z) {
         grn = 160;
     }
 
-    let xOnCanvas = map(x, -1, 1, -50, 50);
-    let yOnCanvas = map(y, -1, 1, -50, 50);
-    let zOnCanvas = map(z, -1, 1, -50, 50);
+    let xOnCanvas = map(x, -1, 1, -30, 30);
+    let yOnCanvas = map(y, -1, 1, -30, 30);
+    let zOnCanvas = map(z, -1, 1, -30, 30);
 
     return new ThreeDPoint(xOnCanvas, yOnCanvas, zOnCanvas, red, grn, blu);
 }
