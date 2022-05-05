@@ -79,6 +79,11 @@ function convertAtomTo3DPoint(type, x, y, z) {
         red = 250;
         grn = 160;
     }
+    //Phosphorus is orange
+    else if( type == "na" ) {
+        red = 128;
+        blu = 128;
+    }
 
     let xOnCanvas = map(x, -1, 1, -30, 30);
     let yOnCanvas = map(y, -1, 1, -30, 30);

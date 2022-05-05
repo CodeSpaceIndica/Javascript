@@ -10,9 +10,7 @@ class ThreeDPoint {
 
         this.projected = 0;
 
-        this.r = inputR;
-        this.g = inputG;
-        this.b = inputB;
+        this.color = "rgb(" + inputR + "," + inputG + "," + inputB + ")";
     }
 
     rotateX(radians) {
@@ -39,15 +37,14 @@ class ThreeDPoint {
         let xProj = this.x * this.projected;
         let yProj = this.y * this.projected;
 
-        let radius = map(this.z, 0, DEPTH, MAX_RADIUS, 0);
+        let radius = map(this.z, 0, DEPTH/2, MAX_RADIUS, 0);
         radius = constrain(radius, 1, MAX_RADIUS);
 
-        let darkenFactor = map(this.z, 0, 150, 1, 0.3);
-        let red = this.r * darkenFactor;
-        let grn = this.g * darkenFactor;
-        let blu = this.b * darkenFactor;
+        var gradient = ctx.createRadialGradient(xProj-(radius/2-2), yProj-(radius/2-2), radius/4, xProj, yProj, radius);
+        gradient.addColorStop(0, 'white');
+        gradient.addColorStop(0.9, this.color);
 
-        ctx.fillStyle = "rgb(" + red + "," + grn + "," + blu + ")";
+        ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(xProj, yProj, radius, 0, Constants.TWO_PI, true);
         ctx.fill();
