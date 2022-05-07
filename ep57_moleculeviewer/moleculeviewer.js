@@ -20,7 +20,7 @@ var moleculeName, moleculeFormula;
  */
  window.addEventListener("load", (event) => {
     //Init the canvas
-    var canvasElement = document.getElementById("aCanvas");
+    let canvasElement = document.getElementById("aCanvas");
     resizeCanvas(canvasElement, false);
 
     aCtx = canvasElement.getContext("2d");
@@ -49,21 +49,13 @@ var moleculeName, moleculeFormula;
             mX = mouseLoc.x;
             mY = mouseLoc.y;
 
-            let xSpeed = mX - dragStartX;
-            let ySpeed = mY - dragStartY;
+            let xSpeed = (mX - dragStartX) / 100;
+            let ySpeed = (mY - dragStartY) / 100;
+
+            rotateMolecule(xSpeed, ySpeed);
 
             dragStartX = mX;
             dragStartY = mY;
-
-            xSpeed /= 100;
-            ySpeed /= 100;
-
-            points.forEach(point3d => {
-                point3d.rotateX(xSpeed);
-                point3d.rotateY(ySpeed);
-            });
-
-            projection();
         }
     });
 
@@ -71,8 +63,66 @@ var moleculeName, moleculeFormula;
         drag = false;
     });
 
+    canvasElement.addEventListener("touchstart", function(event) {
+        let touches = event.changedTouches;
+        let boundingRect = this.getBoundingClientRect();
+
+        touchX = touches[0].clientX - boundingRect.left;
+        touchY = touches[0].clientY - boundingRect.top;
+
+        dragStartX = touchX;
+        dragStartY = touchY;
+        mX = touchX;
+        mY = touchY;
+
+        drag = true;
+
+        event.preventDefault();
+    });
+
+    canvasElement.addEventListener("touchmove", function(event) {
+        if( drag ) {
+            let touches = event.changedTouches;
+            let boundingRect = this.getBoundingClientRect();
+    
+            mX = touches[0].clientX - boundingRect.left;
+            mY = touches[0].clientY - boundingRect.top;
+    
+            let xSpeed = (mX - dragStartX) / 100;
+            let ySpeed = (mY - dragStartY) / 100;
+
+            rotateMolecule(xSpeed, ySpeed);
+
+            dragStartX = mX;
+            dragStartY = mY;
+        }
+
+        event.preventDefault();
+    });
+
+    canvasElement.addEventListener("touchend", function(event) {
+        drag = false;    
+    });
+
+    canvasElement.addEventListener("dblclick", function(event) {
+        autoR = !autoR;
+        if( autoR ) {
+            autoRot();
+        }
+        event.preventDefault();
+    });
+
     initializeDefinitions();
 });
+
+function rotateMolecule(xSpeed, ySpeed) {
+    points.forEach(point3d => {
+        point3d.rotateX(xSpeed);
+        point3d.rotateY(ySpeed);
+    });
+
+    projection();
+}
 
 function initializeDefinitions() {
     let selectDiv = document.getElementById("selectDiv");
@@ -112,6 +162,8 @@ function setMolecule() {
     });
 
     projection();
+
+    rotateMolecule(0.001, 0.001);
 }
 
 function projection() {
@@ -130,4 +182,17 @@ function projection() {
     points.forEach(point3d => {
         point3d.draw(aCtx);
     });
+}
+
+var t = 0.001;
+var autoR = false;
+function autoRot() {
+    if( !autoR ) {
+        return;
+    }
+    rotateMolecule(Math.sin(t)/5, Math.cos(t)/5);
+
+    t += 0.02;
+
+    setTimeout(autoRot, 40);
 }

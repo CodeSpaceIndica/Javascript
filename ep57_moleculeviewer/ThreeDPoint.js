@@ -14,19 +14,19 @@ class ThreeDPoint {
     }
 
     rotateX(radians) {
-        var sinVal = Math.sin(radians);
-        var cosVal = Math.cos(radians);
+        let sinVal = Math.sin(radians);
+        let cosVal = Math.cos(radians);
 
-        var temp = (this.x * cosVal) - (this.z * sinVal);
+        let temp = (this.x * cosVal) - (this.z * sinVal);
         this.z = (this.x * sinVal) + (this.z * cosVal);
         this.x = temp;
     }
 
     rotateY(radians) {
-        var sinVal = Math.sin(radians);
-        var cosVal = Math.cos(radians);
+        let sinVal = Math.sin(radians);
+        let cosVal = Math.cos(radians);
 
-        var temp = (this.y * cosVal) - (this.z * sinVal);
+        let temp = (this.y * cosVal) - (this.z * sinVal);
         this.z = (this.y * sinVal) + (this.z * cosVal);
         this.y = temp;
     }
@@ -40,7 +40,7 @@ class ThreeDPoint {
         let radius = map(this.z, 0, DEPTH/2, MAX_RADIUS, 0);
         radius = constrain(radius, 1, MAX_RADIUS);
 
-        var gradient = ctx.createRadialGradient(xProj-(radius/2-2), yProj-(radius/2-2), radius/4, xProj, yProj, radius);
+        let gradient = ctx.createRadialGradient(xProj-(radius/2-2), yProj-(radius/2-2), radius/4, xProj, yProj, radius);
         gradient.addColorStop(0, 'white');
         gradient.addColorStop(0.9, this.color);
 
