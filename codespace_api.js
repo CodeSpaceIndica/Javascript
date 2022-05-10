@@ -127,6 +127,162 @@ class Rectangle {
 }
 
 /**
+ * @classdesc a class for doing common Matrix operations
+ *
+ */
+class Matrix {
+    /**
+     * @param {Array} array a 2d array
+     */
+    constructor(array) {
+        let numberOfColumns = array[0].length
+        // verify all rows have equal number of elements
+        for (const row of array.slice(1)) {
+            if (row.length != numberOfColumns) {
+                throw new Error('Array provided does not have equal number of elements within sub-Arrays!')
+            }
+        }
+        this.array = array
+        this.order = [this.array.length, this.array[0].length]
+    }
+
+    /**
+     * @param {Number} order the order of the Identity Matrix
+     *
+     * @return {Matrix} the Identity Matrix of the specified order
+     */
+    static identity(order) {
+        if (order < 2) {
+            throw new Error('Invalid Matrix order specified!')
+        }
+
+        let array = []
+        for (let i = 0; i < order; ++i) {
+            let subArray = []
+            for (let j = 0; j < order; ++j) {
+                if (i == j) {
+                    subArray.push(1)
+                } else {
+                    subArray.push(0)
+                }
+            }
+
+            array.push(subArray)
+        }
+
+        return new Matrix(array)
+    }
+
+    /**
+     * @param {Matrix} another Matrix
+     *
+     * @return {Matrix} the sum of both Matrices
+     */
+    add(matrix) {
+        // check if Matrices are compatible
+        if (
+            !(
+                this.order[0] == matrix.order[0] && this.order[1] == matrix.order[1]
+            )
+        ) {
+            throw new Error('Matrices are NOT of the same order!')
+        }
+
+        let array = []
+        for (let i = 0; i < this.order[0]; ++i) {
+            let subArray = []
+            for (let j = 0; j < this.order[1]; ++j) {
+                subArray.push(0)
+            }
+            array.push(subArray)
+        }
+
+        for (let i = 0; i < this.order[0]; ++i) {
+            for (let j = 0; j < this.order[1]; ++j) {
+                array[i][j] = this.array[i][j] + matrix.array[i][j]
+            }
+        }
+
+        return new Matrix(array)
+    }
+
+    /**
+     * @param {Matrix} another Matrix
+     *
+     * @return {Matrix} the difference between the Matrices
+     */
+    subtract(matrix) {
+        return this.add(matrix.multiply(-1))
+    }
+
+    /**
+     * @param {Number|Matrix} scalarOrMatrix a scalar value or another Matrix
+     *
+     *
+     * @return {Matrix} the product of the multiplication
+     */
+    multiply(scalarOrMatrix) {
+        if (typeof scalarOrMatrix == 'number') {
+            return this.scalarMultiply(scalarOrMatrix)
+        } else if (scalarOrMatrix instanceof Matrix) {
+            return this.matrixMultiply(scalarOrMatrix)
+        } else {
+            throw new TypeError('Unknown type specified!')
+        }
+    }
+
+    /**
+     * @param {Number} a scalar
+     *
+     * @return {Matrix} the result of the product
+     */
+    scalarMultiply(scalar) {
+        return new Matrix(this.array.map(row => {
+            row = row.map(column => column * scalar)
+            return row
+        }))
+    }
+
+    /**
+     * @param {Matrix} another Matrix
+     *
+     * @return {Matrix} the result of the Matrix multiplication
+     */
+    matrixMultiply(matrix) {
+        // check if Matrices are compatible
+        if (!this.order[1] == matrix.order[0]) {
+            throw new Error('Matrices are NOT of the same order!')
+        }
+
+        let array = []
+        for (let i = 0; i < this.order[0]; ++i) {
+            let subArray = []
+            for (let j = 0; j < matrix.order[1]; ++j) {
+                subArray.push(0)
+            }
+            array.push(subArray)
+        }
+
+        for (let i = 0; i < this.order[0]; ++i) {
+            let row = this.array[i]
+            for (let j = 0; j < matrix.order[1]; ++j) {
+                let column = Array.from(matrix.array, v => v[j])
+                const sum = row.map((el, idx) => [el, column[idx]])
+                    .reduce((sum, zip) => sum + zip.reduce((product, el) => product * el, 1), 0)
+
+                array[i][j] = sum
+            }
+        }
+
+        return new Matrix(array)
+    }
+
+    toArray() {
+        return this.array
+    }
+}
+
+/**
  * Maps a number of a given input range to a number of the output range.
  * 
  * @param {*} inputNum 
