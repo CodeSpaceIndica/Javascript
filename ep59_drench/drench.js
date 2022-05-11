@@ -1,10 +1,10 @@
 //Constants
 //Count of number of rows and columns
-const COUNT = 5;
+const COUNT = 4;
 
 var width, height;
 
-var ctx;
+var canvasElement, ctx;
 
 var rowSize, colSize;
 
@@ -16,16 +16,21 @@ var colorArr = {
     5: [255, 0, 255],
     6: [255, 255, 0],
 };
+
 var drenchArr = [];
 
 var clickCount = 0;
+var isGameOver = true;
+var isWon = false;
+
+var ccX, ccY;
 
 /**
  * Initialize the Canvas
  */
  window.addEventListener("load", (event) => {
     //Init the canvas
-    var canvasElement = document.getElementById("aCanvas");
+    canvasElement = document.getElementById("aCanvas");
     resizeCanvas(canvasElement, false);
 
     ctx = canvasElement.getContext("2d");
@@ -36,9 +41,27 @@ var clickCount = 0;
     rowSize = height / COUNT;
     colSize = width / COUNT;
 
-    let fontSize = parseInt( width / 40 );
+    let fontSize = parseInt( width / 20 );
     ctx.font = fontSize + "px Monospace";
 
+    let txtMtrcs = ctx.measureText("00");
+    ccX = ((COUNT-1)*colSize)+(colSize/2)-(txtMtrcs.width/2);
+    ccY = ((COUNT-1)*rowSize)+(rowSize/2)+(txtMtrcs.actualBoundingBoxAscent/2);
+
+    initGame();
+
+    addEvents(canvasElement);
+
+    drawDrenchBoard();
+
+    initGOCanvas();
+});
+
+function initGame() {
+    isGameOver = false;
+    clickCount = (COUNT*2) + 1;
+
+    drenchArr = [];
     for(let i=0; i<COUNT; i++) {
         let innerArr = [];
         for(let j=0; j<COUNT; j++) {
@@ -48,8 +71,8 @@ var clickCount = 0;
         }
         drenchArr.push(innerArr);
     }
-
     drenchArr[0][0] *= -1;
+
     //If there are any negative values touching the 
     //positive values but are the same... then make them positive too.
     for(let ii=0; ii<COUNT; ii++) {
@@ -79,31 +102,24 @@ var clickCount = 0;
         }
     }
 
-    addEvents(canvasElement);
-
     drawDrenchBoard();
-});
+}
 
 function drawDrenchBoard() {
     ctx.fillStyle = "#000000";
     ctx.beginPath();
     ctx.rect(0, 0, width, height);
     ctx.fill();
+    
+    isGameOver = true;
 
     let x = 0;
     let y = 0;
     ctx.strokeStyle = "#000000";
-
-    let isGameOver = true;
-
     for(let i=0; i<COUNT; i++) {
         for(let j=0; j<COUNT; j++) {
             rgb = colorArr[ Math.abs(drenchArr[i][j]) ];
-            drawPiece(x, y, colSize, rowSize, rgb[0], rgb[1], rgb[2]);
-
-            // ctx.fillStyle = "#000000";
-            // ctx.beginPath();
-            // ctx.fillText(drenchArr[i][j], x+colSize/2, y+rowSize/2);
+            drawPiece(x, y, colSize, rowSize, rgb[0], rgb[1], rgb[2], drenchArr[i][j]);
 
             if( drenchArr[i][j] < 0 ) {
                 isGameOver = false;
@@ -115,13 +131,38 @@ function drawDrenchBoard() {
         y += rowSize;
     }
 
+    ctx.strokeStyle = "#000000";
+    ctx.shadowColor = "#000000";
+    ctx.shadowBlur = 10;
+    ctx.lineWidth = 5;
+    ctx.strokeText(clickCount, ccX, ccY);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(clickCount, ccX, ccY);
+
+    if( clickCount <= 0 ) {
+        isGameOver = true;
+        isWon = true;
+        for(let i=0; i<COUNT; i++) {
+            for(let j=0; j<COUNT; j++) {
+                if( drenchArr[i][j] < 0 ) {
+                    isWon = false;
+                    break;
+                }
+            }
+        }
+    }
+
     //Check if game is over
     if( isGameOver ) {
-        console.log("GAME IS OVER");
+        if( clickCount > 0 ) {
+            isWon = true;
+        }
+        gameOver();
     }
 }
 
-function drawPiece(x, y, w, h, r, g, b) {
+function drawPiece(x, y, w, h, r, g, b, value) {
     ctx.lineWidth = 4;
 
     ctx.strokeStyle = "rgba(" + r + "," + g + "," + b + ",1.0)";
@@ -148,4 +189,11 @@ function drawPiece(x, y, w, h, r, g, b) {
     ctx.beginPath();
     ctx.rect(x+2, y+2, w-5, h-5);
     ctx.fill();
+
+    if( value > 0 ) {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.beginPath();
+        ctx.rect(x+3, y+3, 6, 6);
+        ctx.fill();
+    }
 }

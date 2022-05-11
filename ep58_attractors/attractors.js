@@ -83,20 +83,23 @@ function attract() {
     ctx.rect(-xCenter, -yCenter, width, height);
     ctx.fill();
 
-    ctx.strokeStyle = "#C576F6";
-    ctx.beginPath();
+    let hue = 0;
     let projected = DEPTH / (DEPTH + points[0].z);
-    let xProj = points[0].x * projected;
-    let yProj = points[0].y * projected;
-    ctx.moveTo(xProj, yProj);
+    let pX = points[0].x * projected;
+    let pY = points[0].y * projected;
     for(let i=1; i<points.length; i++) {
         projected = DEPTH / (DEPTH + points[i].z);
-        xProj = points[i].x * projected;
-        yProj = points[i].y * projected;
-
+        let xProj = points[i].x * projected;
+        let yProj = points[i].y * projected;
+        ctx.strokeStyle = "hsl(" + hue + ",100%,50%)";
+        ctx.beginPath();
+        ctx.moveTo(pX, pY);
         ctx.lineTo(xProj, yProj);
+        ctx.stroke();
+        pX = xProj;
+        pY = yProj;
+        hue++;
     }
-    ctx.stroke();
 
     ctx.fillStyle = "#FFFFFF";
     let x = -xCenter+5;

@@ -1,6 +1,10 @@
 
 function addEvents(canvasElement) {
     canvasElement.addEventListener("click", function(event) {
+        if( isGameOver ) {
+            initGame();
+            return;
+        }
         let mousePos = getRealMousePosition(event, canvasElement);
 
         let x = 0;
@@ -72,10 +76,10 @@ function addEvents(canvasElement) {
                             }
                         }
                     }
-                    clickCount++;
+                    clickCount--;
+
                     drawDrenchBoard();
 
-                    console.log(clickCount);
                     return;
                 }
                 x += colSize;
