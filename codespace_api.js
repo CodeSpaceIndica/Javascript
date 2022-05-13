@@ -316,6 +316,24 @@ function getRealMousePosition(mouseEvent, canvasObject) {
 }
 
 /**
+ * For a given canvas, find the real location of its touches.
+ * DOES NOT WORK FOR MULTIPLE TOUCHES.
+ * 
+ * @param {*} event 
+ * @param {*} canvasObject 
+ * @returns 
+ */
+function getRealTouchLocation(event, canvasObject) {
+    let touches = event.changedTouches;
+    let boundingRect = canvasObject.getBoundingClientRect();
+
+    touchX = touches[0].clientX - boundingRect.left;
+    touchY = touches[0].clientY - boundingRect.top;
+
+    return new Point( touchX, touchY );
+}
+
+/**
  * Returns a random value between a minimum and maximum value.
  * Note: ALSO WORKS WITH NEGATIVE NUMBERS.
  * 
