@@ -13,6 +13,9 @@ var fontSize;
 
 var points;
 
+var bCanvas, bCtx;
+var fCtr;
+
 /**
  * Initialize the Canvas
  */
@@ -23,6 +26,9 @@ var points;
 
     ctx = canvasElement.getContext("2d");
 
+    //get the width, height and 
+    //set the font and finally translate 
+    //the canvas to the center of the canvas.
     width = canvasElement.width;
     height = canvasElement.height;
     xCenter = width/2;
@@ -33,11 +39,25 @@ var points;
     ctx.lineWidth = 4;
     ctx.translate(xCenter, yCenter);
 
+    //initialize the background canvas that has the 
+    //floating circle following the attractor points.
+    bCanvas = document.createElement("canvas");
+    bCanvas.width = width;
+    bCanvas.height = height;
+    bCtx = bCanvas.getContext("2d");
+    bCtx.translate(xCenter, yCenter);
+
+    //Add events to the canvas.
     addEvents(canvasElement);
 
+    //Initialize the attractors from definititions.
     initDefinitions();
 });
 
+/**
+ * Initialize the select with all the attractors
+ * as options.
+ */
 function initDefinitions() {
     let selectDiv = document.getElementById("selectDiv");
 
@@ -46,7 +66,7 @@ function initDefinitions() {
 
     definitions.attractors.forEach(attractor => {
         let id = attractor.id;
-        let name = attractor.name;
+        let name = attractor.object.name();
         let optionElem = document.createElement("option");
         optionElem.value = id;
         optionElem.innerText = name;
@@ -59,9 +79,14 @@ function initDefinitions() {
     document.getElementById("attractorSelect").addEventListener("change", changeAttractor);
 
     changeAttractor();
+
     attract();
 }
 
+/**
+ * When the attractor is changed from the select box, call the 
+ * generatorPoints of the attractor class
+ */
 function changeAttractor() {
     let attractorID = document.getElementById("attractorSelect").value;
 
@@ -70,18 +95,19 @@ function changeAttractor() {
         if( id == attractorID ) {
             currentAttractor = attractor.object;
             points = currentAttractor.generatePoints();
-            attract();
+
+            fCtr = 0;
 
             return;
         }
     });
 }
 
+/**
+ * Render the threeDPoints as 2D points using Weak projection
+ */
 function attract() {
-    ctx.fillStyle = "#000000";
-    ctx.beginPath();
-    ctx.rect(-xCenter, -yCenter, width, height);
-    ctx.fill();
+    ctx.drawImage(bCanvas, -xCenter, -yCenter);
 
     let hue = 0;
     let projected = DEPTH / (DEPTH + points[0].z);
@@ -101,6 +127,7 @@ function attract() {
         hue++;
     }
 
+    //All the text you see on the canvas.
     ctx.fillStyle = "#FFFFFF";
     let x = -xCenter+5;
     let y = -yCenter+fontSize;
@@ -152,5 +179,36 @@ function attract() {
     if( currentAttractor.z0 ) {
         y += fontSize;
         ctx.fillText("z0 = " + currentAttractor.z0, x, y);
+    }
+
+    flutter();
+
+    requestAnimationFrame(attract);
+}
+
+/**
+ * Generate the small circle that traverses the 
+ * generated attractor points
+ */
+function flutter() {
+    bCtx.fillStyle = "#000000";
+    bCtx.beginPath();
+    bCtx.rect(-xCenter, -yCenter, width, height);
+    bCtx.fill();
+
+    let projected = DEPTH / (DEPTH + points[fCtr].z);
+    let xProj = points[fCtr].x * projected;
+    let yProj = points[fCtr].y * projected;
+
+    let radius = map(projected, 0, 2, 3, 7);
+    radius = constrain(radius, 3, 7);
+    bCtx.fillStyle = "#FFFFFF";
+    bCtx.beginPath();
+    bCtx.arc(xProj, yProj, radius, 0, Constants.TWO_PI, false);
+    bCtx.fill();
+
+    fCtr++;
+    if( fCtr > points.length-1 ) {
+        fCtr = 0;
     }
 }
