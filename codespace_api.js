@@ -12,6 +12,38 @@ class Point {
     }
 
     /**
+     * adds values of another point to current point
+     * 
+     * @param {*} anotherPoint 
+     * @returns 
+     */
+     addTo(anotherPoint) {
+        this.x += anotherPoint.x;
+        this.y += anotherPoint.y;
+    }
+
+    /**
+     * Subtracts another point from current point.
+     * 
+     * @param {*} anotherPoint 
+     * @returns 
+     */
+    subtractFrom(anotherPoint) {
+        this.x -= anotherPoint.x;
+        this.y -= anotherPoint.y;
+    }
+
+    /**
+     * returns a new point after adding another point from current point.
+     * 
+     * @param {*} anotherPoint 
+     * @returns 
+     */
+    add(anotherPoint) {
+        return new Point(this.x+anotherPoint.x, this.y+anotherPoint.y);
+    }
+
+    /**
      * returns a new point after subtracting another point from current point.
      * 
      * @param {*} anotherPoint 
@@ -123,6 +155,16 @@ class Rectangle {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Render the current rectangle on to a Context 2D
+     * @param {*} ctx 
+     */
+    render(ctx) {
+        ctx.beginPath();
+        ctx.rect(this.x1, this.y1, this.w, this.h);
+        ctx.fill();
     }
 }
 
