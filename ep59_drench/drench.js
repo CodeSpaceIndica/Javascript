@@ -1,6 +1,6 @@
 //Constants
 //Count of number of rows and columns
-const COUNT = 4;
+const COUNT = 21;
 
 var width, height;
 
